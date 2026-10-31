@@ -1,4 +1,9 @@
-plugins { id("com.android.application"); id("org.jetbrains.kotlin.plugin.compose") }
+plugins {
+ id("com.android.application")
+ id("org.jetbrains.kotlin.plugin.compose")
+ id("com.google.gms.google-services")
+ id("com.google.firebase.crashlytics")
+}
 android {
  namespace = "br.com.gotuner.android"; compileSdk = 36
  defaultConfig { applicationId = "br.com.gotuner"; minSdk = 26; targetSdk = 36; versionCode = 1; versionName = "1.0" }
@@ -6,6 +11,9 @@ android {
 }
 dependencies {
  implementation(project(":shared"))
+ implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
+ implementation("com.google.firebase:firebase-analytics")
+ implementation("com.google.firebase:firebase-crashlytics")
  implementation("androidx.core:core-splashscreen:1.2.0")
  implementation("androidx.activity:activity-compose:1.12.4")
  implementation("androidx.compose.material3:material3:1.3.1")

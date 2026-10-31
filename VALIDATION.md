@@ -66,3 +66,9 @@ Validation: all 13 existing shared regressions preserved and an injected-calcula
 Migrated Kotlin production/test packages and source folders to br.com.gotuner. Updated Android namespaces, generated-resource imports, the iOS audio queue label and architecture source maps. Android application ID and both Xcode configurations now use br.com.gotuner.
 
 Shared JVM tests (14) and Android debug build passed. Xcode Debug ARM64 simulator build passed with the new package exports and bundle identifier. Source scan found no remaining legacy package references. No device installation performed; the new app identifiers represent a separate installation from previous builds.
+
+## Firebase Android setup
+
+Verified google-services.json contains a client registered for br.com.gotuner. Added Google Services plugin 4.5.0, Crashlytics plugin 3.0.8, Firebase BoM 35.1.0, and the main Analytics/Crashlytics Android SDK modules. No shared or iOS Firebase dependency added.
+
+Shared feature tests and Android debug/unit-test build tasks passed. Google Services resource processing and Crashlytics build-ID injection completed. Merged Android manifest includes Firebase initialization and Internet permission. Firebase console receipt, Analytics DebugView and a deliberate test crash were not verified; README documents those steps. The user's google-services.json is unchanged.

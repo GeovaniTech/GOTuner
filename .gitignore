@@ -6,3 +6,6 @@ local.properties
 DerivedData/
 *.xcuserstate
 xcuserdata/
+
+# Local Firebase client configuration
+**/google-services.json

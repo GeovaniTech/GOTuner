@@ -69,3 +69,21 @@ Gradle caches are managed by setup-gradle. Test reports and iOS diagnostics are 
 ## Package identifiers
 
 Kotlin source and test packages use the `br.com.gotuner` root, with matching folders. Android's application ID and iOS's bundle identifier are both `br.com.gotuner`. Platform namespaces remain `br.com.gotuner.android` and `br.com.gotuner.shared`.
+
+## Firebase (Android)
+
+Android uses the Firebase configuration in `androidApp/google-services.json`, registered for `br.com.gotuner`. Google Services processes it into Android resources; Firebase's startup provider initializes the SDK automatically. The Android app applies the Crashlytics Gradle plugin and imports Analytics and Crashlytics through the Firebase BoM. No Firebase dependency is added to shared Kotlin or iOS.
+
+Analytics collects its standard automatic events (including app/session/activity information). Crashlytics collects unhandled JVM crashes and supported ANR reports; Analytics can also supply crash breadcrumbs when Google Analytics is enabled for the Firebase project. This setup adds no audio uploads, pitch events, custom user IDs or intentional crashes. Handled microphone exceptions are not automatically reported as nonfatal errors.
+
+To verify Analytics on a test device:
+
+```sh
+adb shell setprop debug.firebase.analytics.app br.com.gotuner
+```
+
+Launch/use the app and check Analytics DebugView in the Firebase console. Disable debug mode afterward with `adb shell setprop debug.firebase.analytics.app .none.`. Ensure Google Analytics is enabled in the project's Firebase console settings.
+
+To finish Crashlytics console verification, follow [Firebase's test-crash procedure](https://firebase.google.com/docs/crashlytics/android/get-started#force-test-crash) on a test device, relaunch the app so the report can upload, and confirm the report appears in the console. A deliberate test crash has not been added to the production screen.
+
+Keep `androidApp/google-services.json` local and untracked. For Android CI, configure the GitHub Actions repository secret `GOOGLE_SERVICES_JSON` with the complete JSON content. The workflow restores it only inside the runner workspace.

@@ -33,6 +33,16 @@ jobs:
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
+      - name: Restore Firebase configuration
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        shell: bash
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
+            echo "::error::Configure the GOOGLE_SERVICES_JSON repository secret for Android builds."
+            exit 1
+          fi
+          printf '%s' "$GOOGLE_SERVICES_JSON" > androidApp/google-services.json
       - name: Run feature tests and build Android
         # jvmTest discovers all shared feature/domain/presentation tests.
         # --continue still attempts the build if a test fails; the job remains failed.
