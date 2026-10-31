@@ -3,6 +3,7 @@ package com.gotuner.android
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
  private var foreground = false
  private val permission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted -> model.permission(granted); if (granted && foreground) audio.start() }
  override fun onCreate(savedInstanceState: Bundle?) {
+  installSplashScreen()
   super.onCreate(savedInstanceState)
   setContent { MaterialTheme(colorScheme = darkColorScheme(background = Color(0xFF10131B))) {
    val state by model.state.collectAsStateWithLifecycle()
@@ -48,7 +50,7 @@ private fun Double.fmt() = String.format(Locale.getDefault(), "%.1f", this)
  Surface(modifier = Modifier.fillMaxSize()) {
  Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(24.dp)) {
   Text(stringResource(R.string.app_name), fontSize = 28.sp, fontWeight = FontWeight.Bold)
-  Text(stringResource(if(state.isListening) R.string.listening else R.string.microphone_paused), color = Color(0xFF9DA6BA))
+  ListeningStatus(state.isListening)
   Spacer(Modifier.height(36.dp))
   Text(state.detectedFrequency?.let { it.fmt() } ?: "--.-", fontSize = 72.sp, fontWeight = FontWeight.Bold, color = tint)
   Text(stringResource(R.string.frequency_unit), color = tint)
