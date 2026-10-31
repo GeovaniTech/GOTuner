@@ -19,4 +19,5 @@
     <string name="loosen_direction">← Loosen</string>
     <string name="microphone_read_error">Microphone unavailable. Tap Retry.</string>
     <string name="microphone_access_error">Cannot access microphone. Check permissions and tap Retry.</string>
+    <string name="privacy_policy">Privacy policy</string>
 </resources>

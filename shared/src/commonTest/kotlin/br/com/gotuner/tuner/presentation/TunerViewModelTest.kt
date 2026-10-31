@@ -86,4 +86,17 @@ class TunerViewModelTest {
   assertNull(model.state.value.detectedFrequency)
  }
 
+ @Test fun restartMustEstablishStablePitchAgain() {
+  val model = TunerFactory.createViewModel()
+  model.listening(true)
+  repeat(3) { model.process(wave(110.0),48000) }
+  assertNotNull(model.state.value.detectedFrequency)
+  model.listening(false)
+  model.listening(true)
+  model.process(wave(110.0),48000)
+  assertNull(model.state.value.detectedFrequency)
+  model.process(wave(110.0),48000)
+  assertNotNull(model.state.value.detectedFrequency)
+ }
+
 }

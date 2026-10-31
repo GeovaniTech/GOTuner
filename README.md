@@ -87,3 +87,7 @@ Launch/use the app and check Analytics DebugView in the Firebase console. Disabl
 To finish Crashlytics console verification, follow [Firebase's test-crash procedure](https://firebase.google.com/docs/crashlytics/android/get-started#force-test-crash) on a test device, relaunch the app so the report can upload, and confirm the report appears in the console. A deliberate test crash has not been added to the production screen.
 
 Keep `androidApp/google-services.json` local and untracked. For Android CI, configure the GitHub Actions repository secret `GOOGLE_SERVICES_JSON` with the complete JSON content. The workflow restores it only inside the runner workspace.
+
+## Android production release
+
+The audit and submission gates are in [docs/release/ANDROID_RELEASE_AUDIT.md](docs/release/ANDROID_RELEASE_AUDIT.md). See [release instructions](docs/release/RELEASE_INSTRUCTIONS.md) for external signing and `GOTUNER_PRIVACY_POLICY_URL`. Release uses shrinking and Firebase telemetry; debug collection is disabled. No app has been published by this audit.

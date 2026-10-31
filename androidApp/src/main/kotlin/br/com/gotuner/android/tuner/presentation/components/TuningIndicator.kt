@@ -11,6 +11,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
 import br.com.gotuner.android.R
 
 @Composable fun TuningIndicator(cents: Double?, tint: Color) {
@@ -22,7 +23,7 @@ import br.com.gotuner.android.R
   for (i in 0..10) { val x = left+width*i/10; drawLine(if(i==5) Color(0xFF66E3AA) else Color(0xFF70788A),Offset(x,y-10),Offset(x,y+10),2.dp.toPx()) }
   if(cents != null) drawCircle(tint,8.dp.toPx(),Offset(left+width*(marker+1)/2,y))
  }
- Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text(stringResource(R.string.flat)); Text(stringResource(R.string.in_tune)); Text(stringResource(R.string.sharp)) }
+ Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text(stringResource(R.string.flat), Modifier.weight(1f)); Text(stringResource(R.string.in_tune), Modifier.weight(1f), textAlign = TextAlign.Center); Text(stringResource(R.string.sharp), Modifier.weight(1f), textAlign = TextAlign.End) }
  Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text(stringResource(R.string.tighten_direction), fontSize = 12.sp); Text(stringResource(R.string.loosen_direction), fontSize = 12.sp) }
  }
 }

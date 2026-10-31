@@ -31,6 +31,10 @@ class TunerViewModel internal constructor(
     override fun fail(message: String) { mutableState.update { TunerUiState(errorMessage = message, microphonePermissionState = it.microphonePermissionState) } }
     override fun process(samples: FloatArray, sampleRate: Int) {
         if (!state.value.isListening) return
+        // A new capture session must establish its own stable pitch.
+        if (state.value.detectedFrequency == null && lastPitchAt != null) {
+            smoothed = 0.0; stable = 0; lastPitchAt = null
+        }
         val pitch = detector.detect(samples, sampleRate)
         if (pitch == null) {
             // Keep the last reading through the decay of a plucked string.
@@ -47,7 +51,7 @@ class TunerViewModel internal constructor(
         if (++stable < 2) return
         lastPitchAt = nowMillis()
         val result = calculator.calculate(smoothed)
-        mutableState.update { it.copy(detectedFrequency = smoothed, targetFrequency = result?.target?.frequency, targetNote = result?.target?.note, deviationCents = result?.cents, tuningStatus = result?.status, accuracyColor = result?.color, detectionConfidence = pitch.confidence, errorMessage = null) }
+        mutableState.update { if (!it.isListening) it else it.copy(detectedFrequency = smoothed, targetFrequency = result?.target?.frequency, targetNote = result?.target?.note, deviationCents = result?.cents, tuningStatus = result?.status, accuracyColor = result?.color, detectionConfidence = pitch.confidence, errorMessage = null) }
     }
 }
 

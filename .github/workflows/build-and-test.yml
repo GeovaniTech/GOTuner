@@ -46,7 +46,9 @@ jobs:
       - name: Run feature tests and build Android
         # jvmTest discovers all shared feature/domain/presentation tests.
         # --continue still attempts the build if a test fails; the job remains failed.
-        run: ./gradlew --no-daemon --stacktrace --continue :shared:jvmTest :androidApp:testDebugUnitTest :androidApp:assembleDebug
+        run: ./gradlew --no-daemon --stacktrace --continue :shared:jvmTest :androidApp:testDebugUnitTest :androidApp:lintDebug :androidApp:lintRelease :androidApp:assembleDebug :androidApp:bundleRelease
+      - name: Verify release native page alignment
+        run: python3 scripts/check_android_pages.py androidApp/build/outputs/bundle/release/androidApp-release.aab
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -56,6 +58,7 @@ jobs:
             shared/build/reports/tests/
             shared/build/test-results/
             androidApp/build/reports/tests/
+            androidApp/build/reports/lint-results-*
             androidApp/build/test-results/
           if-no-files-found: warn
           retention-days: 14

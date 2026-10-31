@@ -13,6 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
+import br.com.gotuner.android.BuildConfig
 import br.com.gotuner.tuner.domain.model.*
 import br.com.gotuner.tuner.presentation.*
 import br.com.gotuner.android.R
@@ -20,14 +23,18 @@ import br.com.gotuner.android.tuner.presentation.components.*
 import java.util.Locale
 
 private fun Double.fmt() = String.format(Locale.getDefault(), "%.1f", this)
-@Composable fun TunerScreen(state: TunerUiState, onEnable: () -> Unit) {
+@Composable fun TunerScreen(state: TunerUiState, permissionBlocked: Boolean = false, onEnable: () -> Unit) {
  val tint = when(state.accuracyColor) { AccuracyColor.GREEN -> Color(0xFF66E3AA); AccuracyColor.YELLOW -> Color(0xFFFFD166); AccuracyColor.RED -> Color(0xFFFF737A); else -> Color(0xFF9DA6BA) }
  Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
  Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(24.dp)) {
   Text(stringResource(R.string.app_name), fontSize = 28.sp, fontWeight = FontWeight.Bold)
   ListeningStatus(state.isListening)
   Spacer(Modifier.height(36.dp))
-  Text(state.detectedFrequency?.let { it.fmt() } ?: "--.-", fontSize = 72.sp, fontWeight = FontWeight.Bold, color = tint)
+  BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+   val frequency = state.detectedFrequency?.fmt() ?: "--.-"
+   val size = minOf(64f, maxWidth.value / (0.65f * frequency.length * LocalDensity.current.fontScale))
+   Text(frequency, maxLines = 1, fontSize = size.sp, fontWeight = FontWeight.Bold, color = tint)
+  }
   Text(stringResource(R.string.frequency_unit), color = tint)
   state.targetNote?.let { Text(stringResource(R.string.target_reference, it, state.targetFrequency?.fmt().orEmpty()), fontSize = 20.sp) }
   TuningIndicator(state.deviationCents, tint)
@@ -43,8 +50,12 @@ private fun Double.fmt() = String.format(Locale.getDefault(), "%.1f", this)
      fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, color = tint)
    }
   }
-  if(state.microphonePermissionState != MicrophonePermissionState.GRANTED) { Text(stringResource(R.string.permission_rationale)); Button(onClick = onEnable) { Text(stringResource(R.string.enable_microphone)) } }
+  if(state.microphonePermissionState != MicrophonePermissionState.GRANTED) { Text(stringResource(R.string.permission_rationale)); Button(onClick = onEnable) { Text(stringResource(if (permissionBlocked) R.string.open_settings else R.string.enable_microphone)) } }
   state.errorMessage?.let { Text(it); Button(onClick = onEnable) { Text(stringResource(R.string.retry)) } }
+  if (BuildConfig.PRIVACY_POLICY_URL.isNotBlank()) {
+   val uriHandler = LocalUriHandler.current
+   TextButton(onClick = { uriHandler.openUri(BuildConfig.PRIVACY_POLICY_URL) }) { Text(stringResource(R.string.privacy_policy)) }
+  }
  }
  }
 }

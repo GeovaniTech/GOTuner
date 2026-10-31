@@ -19,4 +19,5 @@
     <string name="loosen_direction">← Afrouxar</string>
     <string name="microphone_read_error">Microfone indisponível. Toque em Tentar novamente.</string>
     <string name="microphone_access_error">Não foi possível acessar o microfone. Verifique as permissões e tente novamente.</string>
+    <string name="privacy_policy">Política de privacidade</string>
 </resources>

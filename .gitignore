@@ -9,3 +9,8 @@ xcuserdata/
 
 # Local Firebase client configuration
 **/google-services.json
+
+# Local release signing material
+*.jks
+*.keystore
+keystore.properties
