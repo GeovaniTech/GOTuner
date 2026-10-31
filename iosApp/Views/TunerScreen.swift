@@ -21,37 +21,37 @@ struct TunerScreen: View {
         let state = store.state
         ScrollView {
             VStack(spacing: 26) {
-                Text("Guitar Tuner").font(.largeTitle.bold())
-                Text(state.isListening ? "●  Listening" : "Microphone paused").foregroundStyle(.secondary)
+                Text("app_name").font(.largeTitle.bold())
+                Text(state.isListening ? LocalizedStringKey("listening") : LocalizedStringKey("microphone_paused")).foregroundStyle(.secondary)
                 Spacer().frame(height: 28)
-                Text(state.detectedFrequency.map { String(format: "%.1f", $0.doubleValue) } ?? "--.-")
+                Text(state.detectedFrequency.map { String(format: "%.1f", locale: Locale.current, $0.doubleValue) } ?? "--.-")
                     .font(.system(size: 76, weight: .bold, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1).foregroundStyle(tint)
-                Text("Hz").foregroundStyle(tint)
+                Text("frequency_unit").foregroundStyle(tint)
                 if let note = state.targetNote {
-                    Text("\(note) — \(String(format: "%.1f", state.targetFrequency?.doubleValue ?? 0)) Hz").font(.title3)
+                    Text(String(format: NSLocalizedString("target_reference", comment: "Note and reference frequency"), note, String(format: "%.1f", locale: Locale.current, state.targetFrequency?.doubleValue ?? 0))).font(.title3)
                 }
                 TuningIndicator(cents: state.deviationCents?.doubleValue, tint: tint)
-                Text(state.deviationCents.map { String(format: "%+.1f cents", $0.doubleValue) } ?? "— cents").foregroundStyle(tint)
+                Text(state.deviationCents.map { String(format: NSLocalizedString("cents_value", comment: "Pitch deviation"), String(format: "%+.1f", locale: Locale.current, $0.doubleValue)) } ?? NSLocalizedString("cents_empty", comment: "No pitch")).foregroundStyle(tint)
                 if let instruction {
-                    Text(instruction)
+                    Text(LocalizedStringKey(instruction))
                         .font(.largeTitle.bold()).multilineTextAlignment(.center)
                         .foregroundStyle(tint).padding(.horizontal, 16).padding(.vertical, 20)
                         .frame(maxWidth: .infinity)
                         .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 16))
                 }
                 if state.microphonePermissionState != .granted {
-                    Text("Allow microphone access to tune your guitar.")
-                    Button("Enable microphone") { store.start() }.buttonStyle(.borderedProminent)
-                    Button("Open Settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
+                    Text("permission_rationale")
+                    Button("enable_microphone") { store.start() }.buttonStyle(.borderedProminent)
+                    Button("open_settings") { if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) } }
                 }
-                if let error = state.errorMessage { Text(error); Button("Retry") { store.stop(); store.start() } }
+                if let error = state.errorMessage { Text(error); Button("retry") { store.stop(); store.start() } }
             }.padding(28).frame(maxWidth: 600).frame(maxWidth: .infinity)
         }.background(Color(red: 0.06, green: 0.075, blue: 0.105)).preferredColorScheme(.dark)
             .onAppear { store.start() }.onDisappear { store.stop() }
             .onChange(of: scenePhase) { _, phase in if phase == .active { store.start() } else { store.stop() } }
     }
     private var instruction: String? {
-        switch store.state.tuningStatus { case .flat: return "Tighten string"; case .sharp: return "Loosen string"; default: return nil }
+        switch store.state.tuningStatus { case .flat: return "tighten_string"; case .sharp: return "loosen_string"; default: return nil }
     }
 }
 struct TuningIndicator: View {
@@ -72,8 +72,8 @@ struct TuningIndicator: View {
                     }
                 }.frame(height: 64)
             }.frame(height: 64)
-            HStack { Text("Flat"); Spacer(); Text("In Tune"); Spacer(); Text("Sharp") }
-            HStack { Text("Tighten →"); Spacer(); Text("← Loosen") }.font(.caption).foregroundStyle(.secondary)
+            HStack { Text("flat"); Spacer(); Text("in_tune"); Spacer(); Text("sharp") }
+            HStack { Text("tighten_direction"); Spacer(); Text("loosen_direction") }.font(.caption).foregroundStyle(.secondary)
         }
     }
 }

@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">GOTuner</string>
+    <string name="listening">●  Listening</string>
+    <string name="microphone_paused">Microphone paused</string>
+    <string name="frequency_unit">Hz</string>
+    <string name="target_reference">%1$s — %2$s Hz</string>
+    <string name="cents_value">%1$s cents</string>
+    <string name="cents_empty">— cents</string>
+    <string name="tighten_string">Tighten string</string>
+    <string name="loosen_string">Loosen string</string>
+    <string name="permission_rationale">Allow microphone access to tune your guitar.</string>
+    <string name="enable_microphone">Enable microphone</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="retry">Retry</string>
+    <string name="flat">Flat</string>
+    <string name="in_tune">In Tune</string>
+    <string name="sharp">Sharp</string>
+    <string name="tighten_direction">Tighten →</string>
+    <string name="loosen_direction">← Loosen</string>
+    <string name="microphone_read_error">Microphone unavailable. Tap Retry.</string>
+    <string name="microphone_access_error">Cannot access microphone. Check permissions and tap Retry.</string>
+</resources>

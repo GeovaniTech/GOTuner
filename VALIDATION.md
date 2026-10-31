@@ -40,3 +40,9 @@ Shared JVM suite: 13 tests, zero failures/errors. Deterministic clock tests cove
 Removed the standard-tuning placeholder, play-string prompt and pluck-one-string footer from both native screens. Target note/reference appears only when available. The instruction area now shows only Tighten string or Loosen string, in large bold centered text with a tinted background. The meter retains its In Tune label.
 
 Android debug build and Xcode Debug ARM64 simulator build passed. No shared business logic changed. Real-device tuning advice and iOS runtime layout were not revalidated.
+
+## Issues #5, #6 and #7 — localization and app identity
+
+Added native English/Portuguese resources for both screens, recording errors and iOS microphone permission copy. Applied GOTuner to the screen and launcher names. Added an original guitar-only SVG, Android adaptive vector icon and iOS AppIcon catalog with a 1024 px opaque PNG. Frequency formatting follows the current locale.
+
+Validation: shared JVM suite (13 tests) and Android debug build passed; Xcode Debug ARM64 simulator build passed, including localized bundle resources and the AppIcon catalog. Android translation key parity and all iOS .strings syntax checks passed. Rendered icon inspected visually. Portuguese runtime layout, device permission dialogs and physical-device icon appearance have not been manually verified.
