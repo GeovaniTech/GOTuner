@@ -19,11 +19,50 @@ class TunerTest {
   val random=kotlin.random.Random(42); assertNull(detector.detect(FloatArray(4096){random.nextFloat()-0.5f},48000))
  }
  @Test fun realOctaveIsNotFolded() { val result=PitchDetector().detect(wave(329.63),48000)!!; assertEquals(329.63,result.frequency,0.5); assertEquals("E4",calculator.calculate(result.frequency)!!.target.note) }
- @Test fun viewModelClearsStalePitch() {
-  val model=TunerViewModel(); model.permission(true); model.listening(true)
-  repeat(3){model.process(wave(110.0),48000)}; assertEquals("A2",model.state.value.targetNote)
-  repeat(3){model.process(FloatArray(4096),48000)}; assertNull(model.state.value.detectedFrequency)
-  model.listening(false); model.process(wave(110.0),48000); assertFalse(model.state.value.isListening)
+ @Test fun readingRemainsUntilHoldDeadline() {
+  var time = 0L
+  val model = TunerViewModel { time }; model.permission(true); model.listening(true)
+  repeat(3) { model.process(wave(110.0),48000) }
+  val reading = model.state.value
+  time = 130
+  repeat(3) { model.process(FloatArray(4096),48000) }
+  assertEquals(reading, model.state.value)
+  time = TunerViewModel.PITCH_HOLD_MILLIS - 1
+  model.process(FloatArray(4096),44100)
+  assertEquals(reading, model.state.value)
+  time++
+  model.process(FloatArray(4096),44100)
+  assertNull(model.state.value.detectedFrequency)
+  assertNull(model.state.value.targetNote)
+  assertNull(model.state.value.deviationCents)
+  assertTrue(model.state.value.isListening)
+ }
+ @Test fun newPitchUpdatesImmediatelyAndRestartsHold() {
+  var time = 0L
+  val model = TunerViewModel { time }; model.listening(true)
+  repeat(3) { model.process(wave(110.0),48000) }
+  time = 1000
+  repeat(3) { model.process(wave(146.83),48000) }
+  assertEquals("D3",model.state.value.targetNote)
+  time = 1500
+  model.process(FloatArray(4096),48000)
+  assertEquals("D3",model.state.value.targetNote)
+  time = 2500
+  model.process(FloatArray(4096),48000)
+  assertNull(model.state.value.detectedFrequency)
+ }
+ @Test fun stopAndErrorClearHeldReadingImmediately() {
+  val model = TunerViewModel { 0L }; model.listening(true)
+  repeat(3) { model.process(wave(110.0),48000) }
+  model.listening(false)
+  assertNull(model.state.value.detectedFrequency)
+  model.process(wave(110.0),48000)
+  assertFalse(model.state.value.isListening)
+  model.listening(true)
+  repeat(3) { model.process(wave(110.0),48000) }
+  model.fail("Microphone unavailable")
+  assertNull(model.state.value.detectedFrequency)
+  assertEquals("Microphone unavailable",model.state.value.errorMessage)
  }
  @Test fun quietMicrophoneSignalStillUpdatesFrequency() {
   val model = TunerViewModel(); model.listening(true)
