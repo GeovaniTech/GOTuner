@@ -1,40 +1,35 @@
-package com.gotuner
+package com.gotuner.tuner.presentation
+
+import com.gotuner.tuner.domain.audio.*
+import com.gotuner.tuner.domain.tuning.TuningCalculator
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.math.*
 import kotlin.time.TimeSource
 
-data class TunerUiState(
-    val detectedFrequency: Double? = null, val targetFrequency: Double? = null,
-    val targetNote: String? = null, val deviationCents: Double? = null,
-    val tuningStatus: TuningStatus? = null, val accuracyColor: AccuracyColor? = null,
-    val isListening: Boolean = false,
-    val microphonePermissionState: MicrophonePermissionState = MicrophonePermissionState.UNKNOWN,
-    val detectionConfidence: Double = 0.0, val errorMessage: String? = null
-)
-interface AudioSource { fun start(); fun stop() }
-class StateSubscription(private val job: Job) { fun cancel() = job.cancel() }
 /** Call processing methods from one audio worker; state publication is thread safe. */
-class TunerViewModel internal constructor(private val nowMillis: () -> Long) {
-    constructor() : this(monotonicClock())
+class TunerViewModel internal constructor(
+    private val detector: PitchDetector,
+    private val calculator: TuningCalculator,
+    private val nowMillis: () -> Long
+) : AudioInputObserver {
+    constructor(detector: PitchDetector, calculator: TuningCalculator) : this(detector, calculator, monotonicClock())
 
     companion object {
         const val PITCH_HOLD_MILLIS = 1_500L
     }
 
-    private val detector = PitchDetector()
-    private val calculator = TuningCalculator()
     private val mutableState = MutableStateFlow(TunerUiState())
     val state: StateFlow<TunerUiState> = mutableState.asStateFlow()
     private var smoothed = 0.0
     private var lastPitchAt: Long? = null
     private var stable = 0
     fun observe(onState: (TunerUiState) -> Unit): StateSubscription = StateSubscription(CoroutineScope(Dispatchers.Main).launch { state.collect { onState(it) } })
-    fun permission(granted: Boolean) { mutableState.update { it.copy(microphonePermissionState = if (granted) MicrophonePermissionState.GRANTED else MicrophonePermissionState.DENIED, errorMessage = null) } }
-    fun listening(active: Boolean) { mutableState.update { TunerUiState(isListening = active, microphonePermissionState = it.microphonePermissionState) } }
-    fun fail(message: String) { mutableState.update { TunerUiState(errorMessage = message, microphonePermissionState = it.microphonePermissionState) } }
-    fun process(samples: FloatArray, sampleRate: Int) {
+    override fun permission(granted: Boolean) { mutableState.update { it.copy(microphonePermissionState = if (granted) MicrophonePermissionState.GRANTED else MicrophonePermissionState.DENIED, errorMessage = null) } }
+    override fun listening(active: Boolean) { mutableState.update { TunerUiState(isListening = active, microphonePermissionState = it.microphonePermissionState) } }
+    override fun fail(message: String) { mutableState.update { TunerUiState(errorMessage = message, microphonePermissionState = it.microphonePermissionState) } }
+    override fun process(samples: FloatArray, sampleRate: Int) {
         if (!state.value.isListening) return
         val pitch = detector.detect(samples, sampleRate)
         if (pitch == null) {

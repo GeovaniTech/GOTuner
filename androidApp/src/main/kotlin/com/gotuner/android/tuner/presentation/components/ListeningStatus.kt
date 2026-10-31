@@ -1,4 +1,6 @@
-package com.gotuner.android
+package com.gotuner.android.tuner.presentation.components
+
+import com.gotuner.android.R
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background

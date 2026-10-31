@@ -1,4 +1,4 @@
-package com.gotuner
+package com.gotuner.tuner.domain.audio
 
 import kotlin.math.*
 
