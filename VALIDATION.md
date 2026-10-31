@@ -28,3 +28,9 @@ An initial parallel build attempt was cancelled; a separate offline attempt lack
 Added two regression tests that failed before the fix: a quiet 110 Hz input (0.003 peak normalized PCM) produced no reading, and a confident 180 Hz input was hidden because it was outside a standard target's tolerance. Lowered the RMS gate to 0.001 while retaining the periodicity/confidence filter; pitch publication now works independently of matching a guitar target. Unsupported pitches show Hz without tuning advice. Android checks raw-source capability and falls back to VOICE_RECOGNITION as documented at https://developer.android.com/media/platform/mediarecorder.
 
 Final shared suite: 11 tests, zero failures/errors. Final Android debug build passed. Installed the updated APK on the attached physical Android via ADB; MainActivity cold launch returned Status: ok and its process remained active. Real guitar input has not yet been confirmed. The iOS UI wording changed with the shared behavior; iOS builds were not repeated for this correction.
+
+## Issue #1 — retain the last pitch
+
+Replaced the three-missed-frame timeout with a monotonic 1,500 ms hold after the last accepted reading. New stable pitches update normally and restart the hold; the next audio frame at or beyond the deadline clears the reading. Stop and microphone errors still clear immediately. The duration is defined by `TunerViewModel.PITCH_HOLD_MILLIS`.
+
+Shared JVM suite: 13 tests, zero failures/errors. Deterministic clock tests cover preservation just before the deadline, clearing at the deadline, immediate replacement by a new note, timeout renewal and stop/error behavior. Android debug APK build passed. iOS build and real guitar behavior were not revalidated for this change.

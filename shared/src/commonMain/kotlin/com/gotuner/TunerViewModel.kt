@@ -3,6 +3,7 @@ package com.gotuner
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.math.*
+import kotlin.time.TimeSource
 
 data class TunerUiState(
     val detectedFrequency: Double? = null, val targetFrequency: Double? = null,
@@ -15,13 +16,19 @@ data class TunerUiState(
 interface AudioSource { fun start(); fun stop() }
 class StateSubscription(private val job: Job) { fun cancel() = job.cancel() }
 /** Call processing methods from one audio worker; state publication is thread safe. */
-class TunerViewModel {
+class TunerViewModel internal constructor(private val nowMillis: () -> Long) {
+    constructor() : this(monotonicClock())
+
+    companion object {
+        const val PITCH_HOLD_MILLIS = 1_500L
+    }
+
     private val detector = PitchDetector()
     private val calculator = TuningCalculator()
     private val mutableState = MutableStateFlow(TunerUiState())
     val state: StateFlow<TunerUiState> = mutableState.asStateFlow()
     private var smoothed = 0.0
-    private var missed = 0
+    private var lastPitchAt: Long? = null
     private var stable = 0
     fun observe(onState: (TunerUiState) -> Unit): StateSubscription = StateSubscription(CoroutineScope(Dispatchers.Main).launch { state.collect { onState(it) } })
     fun permission(granted: Boolean) { mutableState.update { it.copy(microphonePermissionState = if (granted) MicrophonePermissionState.GRANTED else MicrophonePermissionState.DENIED, errorMessage = null) } }
@@ -31,15 +38,25 @@ class TunerViewModel {
         if (!state.value.isListening) return
         val pitch = detector.detect(samples, sampleRate)
         if (pitch == null) {
-            missed++
-            if (missed >= 3) { smoothed = 0.0; stable = 0; mutableState.update { TunerUiState(isListening = it.isListening, microphonePermissionState = it.microphonePermissionState) } }
+            // Keep the last reading through the decay of a plucked string.
+            // Elapsed time makes this independent of sample rate and callback cadence.
+            val last = lastPitchAt
+            if (last != null && nowMillis() - last >= PITCH_HOLD_MILLIS) {
+                smoothed = 0.0; stable = 0; lastPitchAt = null
+                mutableState.update { TunerUiState(isListening = it.isListening, microphonePermissionState = it.microphonePermissionState) }
+            }
             return
         }
-        missed = 0
         if (smoothed == 0.0 || abs(1200 * log2(pitch.frequency / smoothed)) > 80) { smoothed = pitch.frequency; stable = 0 }
         smoothed = 0.65 * smoothed + 0.35 * pitch.frequency
         if (++stable < 2) return
+        lastPitchAt = nowMillis()
         val result = calculator.calculate(smoothed)
         mutableState.update { it.copy(detectedFrequency = smoothed, targetFrequency = result?.target?.frequency, targetNote = result?.target?.note, deviationCents = result?.cents, tuningStatus = result?.status, accuracyColor = result?.color, detectionConfidence = pitch.confidence, errorMessage = null) }
     }
+}
+
+private fun monotonicClock(): () -> Long {
+    val origin = TimeSource.Monotonic.markNow()
+    return { origin.elapsedNow().inWholeMilliseconds }
 }
