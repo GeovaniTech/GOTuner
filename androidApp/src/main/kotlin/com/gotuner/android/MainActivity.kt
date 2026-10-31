@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -41,32 +42,32 @@ class MainActivity : ComponentActivity() {
  override fun onStart() { super.onStart(); foreground = true; val granted = checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED; model.permission(granted); if (granted) audio.start() }
  override fun onStop() { foreground = false; audio.stop(); super.onStop() }
 }
-private fun Double.fmt() = String.format(Locale.US, "%.1f", this)
+private fun Double.fmt() = String.format(Locale.getDefault(), "%.1f", this)
 @Composable fun TunerScreen(state: TunerUiState, onEnable: () -> Unit) {
  val tint = when(state.accuracyColor) { AccuracyColor.GREEN -> Color(0xFF66E3AA); AccuracyColor.YELLOW -> Color(0xFFFFD166); AccuracyColor.RED -> Color(0xFFFF737A); else -> Color(0xFF9DA6BA) }
  Surface(modifier = Modifier.fillMaxSize()) {
  Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(24.dp)) {
-  Text("Guitar Tuner", fontSize = 28.sp, fontWeight = FontWeight.Bold)
-  Text(if(state.isListening) "●  Listening" else "Microphone paused", color = Color(0xFF9DA6BA))
+  Text(stringResource(R.string.app_name), fontSize = 28.sp, fontWeight = FontWeight.Bold)
+  Text(stringResource(if(state.isListening) R.string.listening else R.string.microphone_paused), color = Color(0xFF9DA6BA))
   Spacer(Modifier.height(36.dp))
   Text(state.detectedFrequency?.let { it.fmt() } ?: "--.-", fontSize = 72.sp, fontWeight = FontWeight.Bold, color = tint)
-  Text("Hz", color = tint)
-  state.targetNote?.let { Text("$it  —  ${state.targetFrequency?.fmt()} Hz", fontSize = 20.sp) }
+  Text(stringResource(R.string.frequency_unit), color = tint)
+  state.targetNote?.let { Text(stringResource(R.string.target_reference, it, state.targetFrequency?.fmt().orEmpty()), fontSize = 20.sp) }
   TuningIndicator(state.deviationCents, tint)
-  Text(state.deviationCents?.let { "${if(it > 0) "+" else ""}${it.fmt()} cents" } ?: "— cents", color = tint)
+  Text(state.deviationCents?.let { stringResource(R.string.cents_value, "${if(it > 0) "+" else ""}${it.fmt()}") } ?: stringResource(R.string.cents_empty), color = tint)
   val instruction = when(state.tuningStatus) {
-   TuningStatus.FLAT -> "Tighten string"
-   TuningStatus.SHARP -> "Loosen string"
+   TuningStatus.FLAT -> R.string.tighten_string
+   TuningStatus.SHARP -> R.string.loosen_string
    else -> null
   }
   instruction?.let {
    Surface(color = tint.copy(alpha = 0.12f), shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
-    Text(it, modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp), fontSize = 32.sp,
+    Text(stringResource(it), modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp), fontSize = 32.sp,
      fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, color = tint)
    }
   }
-  if(state.microphonePermissionState != MicrophonePermissionState.GRANTED) { Text("Allow microphone access to tune your guitar."); Button(onClick = onEnable) { Text("Enable microphone") } }
-  state.errorMessage?.let { Text(it); Button(onClick = onEnable) { Text("Retry") } }
+  if(state.microphonePermissionState != MicrophonePermissionState.GRANTED) { Text(stringResource(R.string.permission_rationale)); Button(onClick = onEnable) { Text(stringResource(R.string.enable_microphone)) } }
+  state.errorMessage?.let { Text(it); Button(onClick = onEnable) { Text(stringResource(R.string.retry)) } }
  }
  }
 }
@@ -79,7 +80,7 @@ private fun Double.fmt() = String.format(Locale.US, "%.1f", this)
   for (i in 0..10) { val x = left+width*i/10; drawLine(if(i==5) Color(0xFF66E3AA) else Color(0xFF70788A),Offset(x,y-10),Offset(x,y+10),2.dp.toPx()) }
   if(cents != null) drawCircle(tint,8.dp.toPx(),Offset(left+width*(marker+1)/2,y))
  }
- Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Flat"); Text("In Tune"); Text("Sharp") }
- Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text("Tighten →", fontSize = 12.sp); Text("← Loosen", fontSize = 12.sp) }
+ Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text(stringResource(R.string.flat)); Text(stringResource(R.string.in_tune)); Text(stringResource(R.string.sharp)) }
+ Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) { Text(stringResource(R.string.tighten_direction), fontSize = 12.sp); Text(stringResource(R.string.loosen_direction), fontSize = 12.sp) }
  }
 }

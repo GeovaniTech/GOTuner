@@ -11,6 +11,7 @@ class AndroidAudioRecorder(context: Context, private val model: TunerViewModel) 
     private val source = if (context.getSystemService(AudioManager::class.java)
         .getProperty(AudioManager.PROPERTY_SUPPORT_AUDIO_SOURCE_UNPROCESSED) == "true")
         MediaRecorder.AudioSource.UNPROCESSED else MediaRecorder.AudioSource.VOICE_RECOGNITION
+    private val appContext = context.applicationContext
     private var recorder: AudioRecord? = null
     private var job: Job? = null
     @SuppressLint("MissingPermission")
@@ -45,9 +46,9 @@ class AndroidAudioRecorder(context: Context, private val model: TunerViewModel) 
                             }
                         }
                     }
-                } catch (e: Exception) { if (isActive) model.fail("Microphone unavailable. Tap Retry.") }
+                } catch (e: Exception) { if (isActive) model.fail(appContext.getString(R.string.microphone_read_error)) }
             }
-        } catch (e: Exception) { stop(); model.fail("Cannot access microphone. Check permissions and tap Retry.") }
+        } catch (e: Exception) { stop(); model.fail(appContext.getString(R.string.microphone_access_error)) }
     }
     override fun stop() {
         job?.cancel()

@@ -83,7 +83,7 @@ final class IOSAudioRecorder {
             engine = audio
             audio.prepare(); try audio.start()
             model.listening(active: true)
-        } catch { stopEngine(); model.fail(message: "Cannot access microphone. Check access in Settings and retry.") }
+        } catch { stopEngine(); model.fail(message: NSLocalizedString("microphone_access_error", comment: "Microphone initialization error")) }
     }
     private func stopEngine() {
         generation += 1

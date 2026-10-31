@@ -40,3 +40,9 @@ Shared tests cover six targets, cents calculations, configurable color boundarie
 On each real device: grant and deny permission, pluck all six open strings, test ±20 cents, silence and room noise, background/foreground, connect/disconnect an audio route and interrupt recording. Real microphone accuracy, latency and lifecycle behavior require physical-device validation.
 
 Build verification results are recorded in `VALIDATION.md`.
+
+## Language and identity
+
+The app is named **GOTuner**, including its main screen and launcher. English is the fallback; Portuguese is selected by the device/app language. Android translations live in `res/values-pt`; iOS translations and the microphone permission description live in `pt.lproj`. Frequency values use the current locale's decimal separator. Musical note names and the unit `cents` remain standard notation.
+
+The original guitar-only logo is in `assets/guitar-logo.svg`. Android uses the equivalent vector in its adaptive launcher icon; iOS uses the opaque 1024 px AppIcon asset. To regenerate the iOS PNG on macOS, run `swift assets/render-icon.swift iosApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png`.
