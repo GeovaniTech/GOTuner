@@ -34,3 +34,9 @@ Final shared suite: 11 tests, zero failures/errors. Final Android debug build pa
 Replaced the three-missed-frame timeout with a monotonic 1,500 ms hold after the last accepted reading. New stable pitches update normally and restart the hold; the next audio frame at or beyond the deadline clears the reading. Stop and microphone errors still clear immediately. The duration is defined by `TunerViewModel.PITCH_HOLD_MILLIS`.
 
 Shared JVM suite: 13 tests, zero failures/errors. Deterministic clock tests cover preservation just before the deadline, clearing at the deadline, immediate replacement by a new note, timeout renewal and stop/error behavior. Android debug APK build passed. iOS build and real guitar behavior were not revalidated for this change.
+
+## Issue #3 — simplify tuner copy
+
+Removed the standard-tuning placeholder, play-string prompt and pluck-one-string footer from both native screens. Target note/reference appears only when available. The instruction area now shows only Tighten string or Loosen string, in large bold centered text with a tinted background. The meter retains its In Tune label.
+
+Android debug build and Xcode Debug ARM64 simulator build passed. No shared business logic changed. Real-device tuning advice and iOS runtime layout were not revalidated.

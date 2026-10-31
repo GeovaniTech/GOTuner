@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,13 +51,22 @@ private fun Double.fmt() = String.format(Locale.US, "%.1f", this)
   Spacer(Modifier.height(36.dp))
   Text(state.detectedFrequency?.let { it.fmt() } ?: "--.-", fontSize = 72.sp, fontWeight = FontWeight.Bold, color = tint)
   Text("Hz", color = tint)
-  Text(state.targetNote?.let { "$it  —  ${state.targetFrequency?.fmt()} Hz" } ?: "Standard guitar · E A D G B E", fontSize = 20.sp)
+  state.targetNote?.let { Text("$it  —  ${state.targetFrequency?.fmt()} Hz", fontSize = 20.sp) }
   TuningIndicator(state.deviationCents, tint)
   Text(state.deviationCents?.let { "${if(it > 0) "+" else ""}${it.fmt()} cents" } ?: "— cents", color = tint)
-  Text(when(state.tuningStatus) { TuningStatus.FLAT -> "Tighten string"; TuningStatus.SHARP -> "Loosen string"; TuningStatus.IN_TUNE -> "In Tune"; else -> if (state.detectedFrequency != null) "Pitch outside standard guitar targets" else "Play a guitar string" }, fontSize = 24.sp, color = tint)
+  val instruction = when(state.tuningStatus) {
+   TuningStatus.FLAT -> "Tighten string"
+   TuningStatus.SHARP -> "Loosen string"
+   else -> null
+  }
+  instruction?.let {
+   Surface(color = tint.copy(alpha = 0.12f), shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
+    Text(it, modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp), fontSize = 32.sp,
+     fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, color = tint)
+   }
+  }
   if(state.microphonePermissionState != MicrophonePermissionState.GRANTED) { Text("Allow microphone access to tune your guitar."); Button(onClick = onEnable) { Text("Enable microphone") } }
   state.errorMessage?.let { Text(it); Button(onClick = onEnable) { Text("Retry") } }
-  Text("Pluck one open string at a time", color = Color(0xFF9DA6BA))
  }
  }
 }
