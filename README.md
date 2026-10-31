@@ -56,3 +56,12 @@ The original guitar-only logo is in `assets/guitar-logo.svg`. Android uses the e
 Android uses the AndroidX SplashScreen API with the guitar vector and dark background, including compatibility support for Android 8–11. iOS uses a centered, aspect-fit guitar image in the native LaunchScreen storyboard. Neither platform adds a timed loading delay. Keep `LaunchLogo.imageset/LaunchLogo.png` synchronized with the AppIcon PNG when changing the logo.
 
 Listening text and its dot are green while capture is active. The dot gently pulses over a 900 ms half-cycle and stops when paused/backgrounded. iOS Reduce Motion uses a static dot; Compose follows the system animation duration scale.
+
+## Continuous integration
+
+`.github/workflows/build-and-test.yml` runs on every push and pull request, and supports manual runs from GitHub Actions:
+
+- **Android build and feature tests**: JDK 17, SDK 36, all shared domain/presentation tests through `:shared:jvmTest`, Android JVM tests through `:androidApp:testDebugUnitTest`, and `:androidApp:assembleDebug`.
+- **iOS simulator build**: Apple Silicon macOS runner and its default Xcode, compiling the shared Kotlin framework and native SwiftUI app without signing credentials.
+
+Gradle caches are managed by setup-gradle. Test reports and iOS diagnostics are uploaded even after failures; successful Android builds include a downloadable debug APK. New tests under shared `commonTest` and Android `test` source sets are discovered automatically. These checks do not exercise physical microphones, UI instrumentation, device signing or App Store release builds.

@@ -1,0 +1,104 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: Android build and feature tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android build packages
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+      - name: Run feature tests and build Android
+        # jvmTest discovers all shared feature/domain/presentation tests.
+        # --continue still attempts the build if a test fails; the job remains failed.
+        run: ./gradlew --no-daemon --stacktrace --continue :shared:jvmTest :androidApp:testDebugUnitTest :androidApp:assembleDebug
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-and-feature-test-reports
+          path: |
+            shared/build/reports/tests/
+            shared/build/test-results/
+            androidApp/build/reports/tests/
+            androidApp/build/test-results/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-apk
+          path: androidApp/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
+
+  ios:
+    name: iOS simulator build
+    # This project targets iosSimulatorArm64, so use an Apple Silicon runner.
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      # Gradle configures the Android modules while building the shared framework.
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android build packages
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+      - name: Check Apple toolchain
+        run: |
+          test "$(uname -m)" = arm64
+          xcodebuild -version
+          xcodebuild -showsdks
+      - name: Build native iOS app and shared framework
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project iosApp/GuitarTuner.xcodeproj \
+            -scheme GuitarTuner \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/GOTunerDerivedData" \
+            -resultBundlePath "$RUNNER_TEMP/ios-build.xcresult" \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee "$RUNNER_TEMP/ios-build.log"
+      - name: Upload iOS build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-diagnostics
+          path: |
+            ${{ runner.temp }}/ios-build.log
+            ${{ runner.temp }}/ios-build.xcresult
+          if-no-files-found: warn
+          retention-days: 14
