@@ -26,6 +26,9 @@ jobs:
           java-version: '17'
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Override the default, which includes the unavailable legacy tools package.
+          packages: platform-tools
       - name: Install Android build packages
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
       - name: Set up Gradle
@@ -69,6 +72,9 @@ jobs:
       # Gradle configures the Android modules while building the shared framework.
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Override the default, which includes the unavailable legacy tools package.
+          packages: platform-tools
       - name: Install Android build packages
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
       - name: Set up Gradle
