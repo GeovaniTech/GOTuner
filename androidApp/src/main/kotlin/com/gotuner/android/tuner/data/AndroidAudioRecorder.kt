@@ -1,12 +1,14 @@
-package com.gotuner.android
+package com.gotuner.android.tuner.data
+
+import com.gotuner.android.R
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.media.*
-import com.gotuner.*
+import com.gotuner.tuner.domain.audio.*
 import kotlinx.coroutines.*
 
-class AndroidAudioRecorder(context: Context, private val model: TunerViewModel) : AudioSource {
+class AndroidAudioRecorder(context: Context, private val observer: AudioInputObserver) : AudioSource {
     // Unsupported UNPROCESSED falls back to DEFAULT, which may suppress guitar audio.
     private val source = if (context.getSystemService(AudioManager::class.java)
         .getProperty(AudioManager.PROPERTY_SUPPORT_AUDIO_SOURCE_UNPROCESSED) == "true")
@@ -29,7 +31,7 @@ class AndroidAudioRecorder(context: Context, private val model: TunerViewModel) 
             recorder = audio
             audio.startRecording()
             check(audio.recordingState == AudioRecord.RECORDSTATE_RECORDING)
-            model.listening(true)
+            observer.listening(true)
             job = CoroutineScope(Dispatchers.Default).launch {
                 val pcm = ShortArray(2048); val frame = FloatArray(4096)
                 var filled = 0
@@ -41,14 +43,14 @@ class AndroidAudioRecorder(context: Context, private val model: TunerViewModel) 
                         for (i in 0 until count) {
                             frame[filled++] = pcm[i] / 32768f
                             if (filled == frame.size) {
-                                model.process(frame, audio.sampleRate)
+                                observer.process(frame, audio.sampleRate)
                                 frame.copyInto(frame, 0, 2048, 4096); filled = 2048
                             }
                         }
                     }
-                } catch (e: Exception) { if (isActive) model.fail(appContext.getString(R.string.microphone_read_error)) }
+                } catch (e: Exception) { if (isActive) observer.fail(appContext.getString(R.string.microphone_read_error)) }
             }
-        } catch (e: Exception) { stop(); model.fail(appContext.getString(R.string.microphone_access_error)) }
+        } catch (e: Exception) { stop(); observer.fail(appContext.getString(R.string.microphone_access_error)) }
     }
     override fun stop() {
         job?.cancel()
@@ -56,6 +58,6 @@ class AndroidAudioRecorder(context: Context, private val model: TunerViewModel) 
         // Join before releasing so no read or pitch processing can race a subsequent start.
         job?.let { runBlocking { it.join() } }
         job = null; recorder?.release(); recorder = null
-        model.listening(false)
+        observer.listening(false)
     }
 }

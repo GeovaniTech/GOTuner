@@ -54,3 +54,9 @@ Added AndroidX core-splashscreen 1.2.0 with a launch theme using the guitar vect
 Replaced the bullet embedded in localized listening strings with a native green circle. Listening text is green; the circle animates scale/opacity over 900 ms each way while listening and foregrounded. Paused status is gray without a pulsing circle. iOS Reduce Motion shows a static dot, and Compose honors the system animation duration scale.
 
 Validation: shared JVM suite (13 tests) and Android debug build passed. Xcode Debug ARM64 simulator build passed and the compiled LaunchScreen.storyboardc is present in the app bundle. Updated APK installed on the attached Android; cold launch returned Status: ok. Screenshot visually confirms green listening text and its separate dot. iOS runtime launch, Reduce Motion and continuous animation behavior remain manual checks.
+
+## Issue #12 — feature-based Clean Architecture
+
+Organized the tuner feature into domain/data/presentation responsibilities inside the existing modules. Shared domain contains audio interfaces, YIN detection, tuning models and calculations. Native audio adapters now consume AudioInputObserver instead of TunerViewModel and implement AudioSource. The shared ViewModel receives its detector/calculator via constructor injection. App composition constructs dependencies; SwiftUI state observation and native view components are separate files. Xcode references were updated for all moved/extracted sources. See ARCHITECTURE.md.
+
+Validation: all 13 existing shared regressions preserved and an injected-calculator/audio-port test added; 14 tests passed (4 pitch, 4 tuning, 6 presentation). Android debug build passed. Xcode Debug ARM64 simulator build passed with the moved Swift sources and exported Kotlin interfaces. Source dependency checks confirm no domain-to-presentation/platform imports or native capture-to-ViewModel dependency. No physical microphone runtime checks repeated for this structural change.

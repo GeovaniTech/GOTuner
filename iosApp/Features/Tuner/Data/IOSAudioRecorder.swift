@@ -2,9 +2,9 @@ import AVFoundation
 import Shared
 
 /// All engine operations and shared processing run on this serial worker.
-final class IOSAudioRecorder {
+final class IOSAudioRecorder: AudioSource {
     private let worker = DispatchQueue(label: "com.gotuner.audio", qos: .userInitiated)
-    private let model: TunerViewModel
+    private let observer: AudioInputObserver
     private var engine: AVAudioEngine?
     private var observers: [NSObjectProtocol] = []
     private var desired = false
@@ -12,8 +12,8 @@ final class IOSAudioRecorder {
     private var generation = 0
     private var frame = KotlinFloatArray(size: 4096)
     private var filled = 0
-    init(model: TunerViewModel) {
-        self.model = model
+    init(observer: AudioInputObserver) {
+        self.observer = observer
         let center = NotificationCenter.default
         observers.append(center.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: nil) { [weak self] note in
             guard let value = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt else { return }
@@ -40,7 +40,7 @@ final class IOSAudioRecorder {
             AVAudioApplication.requestRecordPermission { [weak self] granted in
                 self?.worker.async { [weak self] in
                     guard let self else { return }
-                    self.model.permission(granted: granted)
+                    self.observer.permission(granted: granted)
                     if granted && self.desired && !self.interrupted { self.startEngine() }
                 }
             }
@@ -73,7 +73,7 @@ final class IOSAudioRecorder {
                     for index in 0..<count {
                         self.frame.set(index: Int32(self.filled), value: slot.samples[index]); self.filled += 1
                         if self.filled == 4096 {
-                            self.model.process(samples: self.frame, sampleRate: Int32(format.sampleRate))
+                            self.observer.process(samples: self.frame, sampleRate: Int32(format.sampleRate))
                             for i in 0..<2048 { self.frame.set(index: Int32(i), value: self.frame.get(index: Int32(i+2048))) }
                             self.filled = 2048
                         }
@@ -82,13 +82,13 @@ final class IOSAudioRecorder {
             }
             engine = audio
             audio.prepare(); try audio.start()
-            model.listening(active: true)
-        } catch { stopEngine(); model.fail(message: NSLocalizedString("microphone_access_error", comment: "Microphone initialization error")) }
+            observer.listening(active: true)
+        } catch { stopEngine(); observer.fail(message: NSLocalizedString("microphone_access_error", comment: "Microphone initialization error")) }
     }
     private func stopEngine() {
         generation += 1
         if let engine { engine.inputNode.removeTap(onBus: 0); engine.stop() }
-        engine = nil; filled = 0; model.listening(active: false)
+        engine = nil; filled = 0; observer.listening(active: false)
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
     private enum AudioError: Error { case noInput }

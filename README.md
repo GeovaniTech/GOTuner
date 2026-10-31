@@ -21,9 +21,13 @@ xcodebuild -project iosApp/GuitarTuner.xcodeproj -scheme GuitarTuner \
 
 ## Architecture
 
-- `shared/src/commonMain`: reusable YIN detector, tuning calculator, models and framework-independent MVVM StateFlow state. The JVM target exists for hardware-free tests.
-- `androidApp`: AudioRecord mono PCM capture, runtime permission, lifecycle management and native Compose Material 3 screen.
-- `iosApp`: AVAudioEngine capture, AVAudioSession permission/interruption/route handling and native SwiftUI screen. A cancellable StateFlow observer delivers updates on the main dispatcher.
+The tuner feature uses `domain`, `data`, and `presentation` responsibilities within the existing modules. See [ARCHITECTURE.md](ARCHITECTURE.md) for the source map and dependency direction.
+
+- `shared/.../tuner/domain`: platform-independent pitch detection, tuning models/calculations and audio contracts.
+- `shared/.../tuner/presentation`: injected MVVM ViewModel, StateFlow state and observation lifecycle.
+- `androidApp/.../tuner/data` and `iosApp/Features/Tuner/Data`: native microphone adapters depending on shared domain contracts.
+- Native feature `presentation` folders: screens, UI components and the SwiftUI state adapter.
+- App entry points and `TunerFactory`: explicit dependency construction; no DI framework.
 
 The shared detector uses 4096-sample frames with 2048-sample overlap (about 85–93 ms of signal and 43–46 ms between estimates). Scratch buffers are reused. iOS uses a bounded preallocated buffer pool and one audio worker; Android reads and processes on a background dispatcher. Engine work never runs on the UI thread. Only small immutable estimates/state objects are allocated per result.
 
