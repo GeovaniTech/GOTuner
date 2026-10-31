@@ -5,7 +5,7 @@ Code is organized by feature first, then responsibility. The existing feature is
 ## Source map
 
 ```text
-shared/src/commonMain/kotlin/com/gotuner/
+shared/src/commonMain/kotlin/br/com/gotuner/
   app/TunerFactory.kt
   tuner/
     domain/
@@ -14,7 +14,7 @@ shared/src/commonMain/kotlin/com/gotuner/
       tuning/         # Reference selection and cents calculations
     presentation/     # MVVM ViewModel, UI state, observation subscription
 
-androidApp/src/main/kotlin/com/gotuner/android/
+androidApp/src/main/kotlin/br/com/gotuner/android/
   MainActivity.kt     # Native entry, permission/lifecycle and dependency setup
   tuner/
     data/             # AudioRecord adapter
@@ -57,7 +57,7 @@ The YIN algorithm, frequency smoothing, target selection, accuracy thresholds, 1
 
 ## Tests
 
-`shared/src/commonTest/kotlin/com/gotuner/tuner` mirrors the production feature:
+`shared/src/commonTest/kotlin/br/com/gotuner/tuner` mirrors the production feature:
 
 - `domain/audio/PitchDetectorTest`: signals, harmonics, noise and octave handling.
 - `domain/tuning/TuningCalculatorTest`: references, cents, thresholds and unsupported frequencies.

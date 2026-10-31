@@ -3,7 +3,7 @@ import Shared
 
 /// All engine operations and shared processing run on this serial worker.
 final class IOSAudioRecorder: AudioSource {
-    private let worker = DispatchQueue(label: "com.gotuner.audio", qos: .userInitiated)
+    private let worker = DispatchQueue(label: "br.com.gotuner.audio", qos: .userInitiated)
     private let observer: AudioInputObserver
     private var engine: AVAudioEngine?
     private var observers: [NSObjectProtocol] = []

@@ -1,6 +1,6 @@
 plugins { kotlin("multiplatform"); id("com.android.kotlin.multiplatform.library") }
 kotlin {
-    android { namespace = "com.gotuner.shared"; compileSdk = 36; minSdk = 26 }
+    android { namespace = "br.com.gotuner.shared"; compileSdk = 36; minSdk = 26 }
     jvm()
     listOf(iosArm64(), iosSimulatorArm64()).forEach { it.binaries.framework { baseName = "Shared"; isStatic = true } }
     sourceSets {

@@ -65,3 +65,7 @@ Listening text and its dot are green while capture is active. The dot gently pul
 - **iOS simulator build**: Apple Silicon macOS runner and its default Xcode, compiling the shared Kotlin framework and native SwiftUI app without signing credentials.
 
 Gradle caches are managed by setup-gradle. Test reports and iOS diagnostics are uploaded even after failures; successful Android builds include a downloadable debug APK. New tests under shared `commonTest` and Android `test` source sets are discovered automatically. These checks do not exercise physical microphones, UI instrumentation, device signing or App Store release builds.
+
+## Package identifiers
+
+Kotlin source and test packages use the `br.com.gotuner` root, with matching folders. Android's application ID and iOS's bundle identifier are both `br.com.gotuner`. Platform namespaces remain `br.com.gotuner.android` and `br.com.gotuner.shared`.

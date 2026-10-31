@@ -60,3 +60,9 @@ Validation: shared JVM suite (13 tests) and Android debug build passed. Xcode De
 Organized the tuner feature into domain/data/presentation responsibilities inside the existing modules. Shared domain contains audio interfaces, YIN detection, tuning models and calculations. Native audio adapters now consume AudioInputObserver instead of TunerViewModel and implement AudioSource. The shared ViewModel receives its detector/calculator via constructor injection. App composition constructs dependencies; SwiftUI state observation and native view components are separate files. Xcode references were updated for all moved/extracted sources. See ARCHITECTURE.md.
 
 Validation: all 13 existing shared regressions preserved and an injected-calculator/audio-port test added; 14 tests passed (4 pitch, 4 tuning, 6 presentation). Android debug build passed. Xcode Debug ARM64 simulator build passed with the moved Swift sources and exported Kotlin interfaces. Source dependency checks confirm no domain-to-presentation/platform imports or native capture-to-ViewModel dependency. No physical microphone runtime checks repeated for this structural change.
+
+## Package root migration
+
+Migrated Kotlin production/test packages and source folders to br.com.gotuner. Updated Android namespaces, generated-resource imports, the iOS audio queue label and architecture source maps. Android application ID and both Xcode configurations now use br.com.gotuner.
+
+Shared JVM tests (14) and Android debug build passed. Xcode Debug ARM64 simulator build passed with the new package exports and bundle identifier. Source scan found no remaining legacy package references. No device installation performed; the new app identifiers represent a separate installation from previous builds.
