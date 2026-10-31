@@ -46,3 +46,11 @@ Android debug build and Xcode Debug ARM64 simulator build passed. No shared busi
 Added native English/Portuguese resources for both screens, recording errors and iOS microphone permission copy. Applied GOTuner to the screen and launcher names. Added an original guitar-only SVG, Android adaptive vector icon and iOS AppIcon catalog with a 1024 px opaque PNG. Frequency formatting follows the current locale.
 
 Validation: shared JVM suite (13 tests) and Android debug build passed; Xcode Debug ARM64 simulator build passed, including localized bundle resources and the AppIcon catalog. Android translation key parity and all iOS .strings syntax checks passed. Rendered icon inspected visually. Portuguese runtime layout, device permission dialogs and physical-device icon appearance have not been manually verified.
+
+## Issues #9 and #10 — native launch and listening activity
+
+Added AndroidX core-splashscreen 1.2.0 with a launch theme using the guitar vector and a matching dark post-launch theme. Added the iOS LaunchScreen storyboard and LaunchLogo asset, registered as bundle resources. There is no artificial splash delay or second splash activity.
+
+Replaced the bullet embedded in localized listening strings with a native green circle. Listening text is green; the circle animates scale/opacity over 900 ms each way while listening and foregrounded. Paused status is gray without a pulsing circle. iOS Reduce Motion shows a static dot, and Compose honors the system animation duration scale.
+
+Validation: shared JVM suite (13 tests) and Android debug build passed. Xcode Debug ARM64 simulator build passed and the compiled LaunchScreen.storyboardc is present in the app bundle. Updated APK installed on the attached Android; cold launch returned Status: ok. Screenshot visually confirms green listening text and its separate dot. iOS runtime launch, Reduce Motion and continuous animation behavior remain manual checks.

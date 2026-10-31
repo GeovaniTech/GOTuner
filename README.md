@@ -46,3 +46,9 @@ Build verification results are recorded in `VALIDATION.md`.
 The app is named **GOTuner**, including its main screen and launcher. English is the fallback; Portuguese is selected by the device/app language. Android translations live in `res/values-pt`; iOS translations and the microphone permission description live in `pt.lproj`. Frequency values use the current locale's decimal separator. Musical note names and the unit `cents` remain standard notation.
 
 The original guitar-only logo is in `assets/guitar-logo.svg`. Android uses the equivalent vector in its adaptive launcher icon; iOS uses the opaque 1024 px AppIcon asset. To regenerate the iOS PNG on macOS, run `swift assets/render-icon.swift iosApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png`.
+
+## Launch and listening status
+
+Android uses the AndroidX SplashScreen API with the guitar vector and dark background, including compatibility support for Android 8–11. iOS uses a centered, aspect-fit guitar image in the native LaunchScreen storyboard. Neither platform adds a timed loading delay. Keep `LaunchLogo.imageset/LaunchLogo.png` synchronized with the AppIcon PNG when changing the logo.
+
+Listening text and its dot are green while capture is active. The dot gently pulses over a 900 ms half-cycle and stops when paused/backgrounded. iOS Reduce Motion uses a static dot; Compose follows the system animation duration scale.

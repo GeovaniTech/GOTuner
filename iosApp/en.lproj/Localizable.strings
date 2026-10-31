@@ -1,5 +1,5 @@
 "app_name" = "GOTuner";
-"listening" = "●  Listening";
+"listening" = "Listening";
 "microphone_paused" = "Microphone paused";
 "frequency_unit" = "Hz";
 "target_reference" = "%@ — %@ Hz";
