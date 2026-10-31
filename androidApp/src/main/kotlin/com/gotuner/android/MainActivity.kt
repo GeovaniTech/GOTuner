@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
  override fun onCreate(savedInstanceState: Bundle?) {
   installSplashScreen()
   super.onCreate(savedInstanceState)
-  setContent { MaterialTheme(colorScheme = darkColorScheme(background = Color(0xFF10131B))) {
+  setContent { MaterialTheme(colorScheme = darkColorScheme(background = colorResource(R.color.launcher_background), surface = colorResource(R.color.launcher_background))) {
    val state by model.state.collectAsStateWithLifecycle()
    TunerScreen(state) { if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) { audio.stop(); audio.start() } else permission.launch(Manifest.permission.RECORD_AUDIO) }
   } }
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
 private fun Double.fmt() = String.format(Locale.getDefault(), "%.1f", this)
 @Composable fun TunerScreen(state: TunerUiState, onEnable: () -> Unit) {
  val tint = when(state.accuracyColor) { AccuracyColor.GREEN -> Color(0xFF66E3AA); AccuracyColor.YELLOW -> Color(0xFFFFD166); AccuracyColor.RED -> Color(0xFFFF737A); else -> Color(0xFF9DA6BA) }
- Surface(modifier = Modifier.fillMaxSize()) {
+ Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
  Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(24.dp)) {
   Text(stringResource(R.string.app_name), fontSize = 28.sp, fontWeight = FontWeight.Bold)
   ListeningStatus(state.isListening)
