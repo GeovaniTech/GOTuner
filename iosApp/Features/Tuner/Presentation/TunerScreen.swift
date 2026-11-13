@@ -41,6 +41,6 @@ struct TunerScreen: View {
             .onChange(of: scenePhase) { _, phase in if phase == .active { store.start() } else { store.stop() } }
     }
     private var instruction: String? {
-        switch store.state.tuningStatus { case .flat: return "tighten_string"; case .sharp: return "loosen_string"; default: return nil }
+        switch store.state.tuningStatus { case .flat: return "tighten_string"; case .sharp: return "loosen_string"; case .inTune: return "string_in_tune"; default: return nil }
     }
 }

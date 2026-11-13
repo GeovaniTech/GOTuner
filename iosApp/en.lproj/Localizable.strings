@@ -7,6 +7,7 @@
 "cents_empty" = "— cents";
 "tighten_string" = "Tighten string";
 "loosen_string" = "Loosen string";
+"string_in_tune" = "In tune";
 "permission_rationale" = "Allow microphone access to tune your guitar.";
 "enable_microphone" = "Enable microphone";
 "open_settings" = "Open Settings";

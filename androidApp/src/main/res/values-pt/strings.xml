@@ -8,6 +8,7 @@
     <string name="cents_empty">— cents</string>
     <string name="tighten_string">Aperte a corda</string>
     <string name="loosen_string">Afrouxe a corda</string>
+    <string name="string_in_tune">Afinado ✓</string>
     <string name="permission_rationale">Permita o acesso ao microfone para afinar seu violão.</string>
     <string name="enable_microphone">Ativar microfone</string>
     <string name="open_settings">Abrir Ajustes</string>

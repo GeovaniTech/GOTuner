@@ -10,40 +10,62 @@ import br.com.gotuner.tuner.presentation.*
 import br.com.gotuner.app.TunerFactory
 
 class TunerViewModelTest {
- @Test fun readingRemainsUntilHoldDeadline() {
-  var time = 0L
-  val model = TunerViewModel(PitchDetector(), TuningCalculator()) { time }; model.permission(true); model.listening(true)
+ private fun cents(c: Double) = 110.0 * 2.0.pow(c / 1200)
+
+ @Test fun readingIsNeverClearedBySilence() {
+  val model = TunerViewModel(PitchDetector(), TuningCalculator()); model.permission(true); model.listening(true)
   repeat(3) { model.process(wave(110.0),48000) }
   val reading = model.state.value
-  time = 130
-  repeat(3) { model.process(FloatArray(4096),48000) }
+  assertNotNull(reading.detectedFrequency)
+  repeat(500) { model.process(FloatArray(4096),48000) }
   assertEquals(reading, model.state.value)
-  time = TunerViewModel.PITCH_HOLD_MILLIS - 1
-  model.process(FloatArray(4096),44100)
-  assertEquals(reading, model.state.value)
-  time++
-  model.process(FloatArray(4096),44100)
-  assertNull(model.state.value.detectedFrequency)
-  assertNull(model.state.value.targetNote)
-  assertNull(model.state.value.deviationCents)
+  assertEquals("A2", model.state.value.targetNote)
+  assertNotNull(model.state.value.deviationCents)
   assertTrue(model.state.value.isListening)
  }
- @Test fun newPitchUpdatesImmediatelyAndRestartsHold() {
-  var time = 0L
-  val model = TunerViewModel(PitchDetector(), TuningCalculator()) { time }; model.listening(true)
+ @Test fun newPitchUpdatesAfterSilence() {
+  val model = TunerViewModel(PitchDetector(), TuningCalculator()); model.listening(true)
   repeat(3) { model.process(wave(110.0),48000) }
-  time = 1000
+  repeat(50) { model.process(FloatArray(4096),48000) }
   repeat(3) { model.process(wave(146.83),48000) }
   assertEquals("D3",model.state.value.targetNote)
-  time = 1500
-  model.process(FloatArray(4096),48000)
+  repeat(50) { model.process(FloatArray(4096),48000) }
   assertEquals("D3",model.state.value.targetNote)
-  time = 2500
-  model.process(FloatArray(4096),48000)
-  assertNull(model.state.value.detectedFrequency)
+ }
+ @Test fun inTuneSurvivesHarderAndSofterPlucks() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  repeat(6) { model.process(wave(110.0),48000) }
+  assertEquals(TuningStatus.IN_TUNE, model.state.value.tuningStatus)
+  // Hard pluck reads sharp, soft decay reads flat; both stay inside the release window.
+  for (offset in listOf(10.0, 9.0, -8.0, -10.0, 6.0, -4.0)) {
+   model.process(wave(cents(offset)),48000)
+   assertEquals(TuningStatus.IN_TUNE, model.state.value.tuningStatus, "offset $offset")
+   assertEquals(AccuracyColor.GREEN, model.state.value.accuracyColor)
+  }
+ }
+ @Test fun singleAttackSpikeIsIgnored() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  repeat(6) { model.process(wave(110.0),48000) }
+  model.process(wave(cents(40.0)),48000)
+  assertEquals(TuningStatus.IN_TUNE, model.state.value.tuningStatus)
+ }
+ @Test fun reachingTargetWhileTighteningShowsInTune() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  repeat(6) { model.process(wave(cents(-30.0)),48000) }
+  assertEquals(TuningStatus.FLAT, model.state.value.tuningStatus)
+  repeat(12) { model.process(wave(cents(-2.0)),48000) }
+  assertEquals(TuningStatus.IN_TUNE, model.state.value.tuningStatus)
+  repeat(100) { model.process(FloatArray(4096),48000) }
+  assertEquals(TuningStatus.IN_TUNE, model.state.value.tuningStatus)
+ }
+ @Test fun clearlyDetunedStringLeavesInTune() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  repeat(6) { model.process(wave(110.0),48000) }
+  repeat(12) { model.process(wave(cents(30.0)),48000) }
+  assertEquals(TuningStatus.SHARP, model.state.value.tuningStatus)
  }
  @Test fun stopAndErrorClearHeldReadingImmediately() {
-  val model = TunerViewModel(PitchDetector(), TuningCalculator()) { 0L }; model.listening(true)
+  val model = TunerViewModel(PitchDetector(), TuningCalculator()); model.listening(true)
   repeat(3) { model.process(wave(110.0),48000) }
   model.listening(false)
   assertNull(model.state.value.detectedFrequency)
@@ -73,7 +95,7 @@ class TunerViewModelTest {
   assertNull(model.state.value.accuracyColor)
  }
  @Test fun injectedCalculatorIsUsedThroughAudioPort() {
-  val model = TunerViewModel(PitchDetector(), TuningCalculator(TuningConfig(greenCents = 25.0, yellowCents = 35.0)))
+  val model = TunerViewModel(PitchDetector(), TuningCalculator(TuningConfig(greenCents = 25.0, releaseCents = 30.0, yellowCents = 35.0)))
   val input: AudioInputObserver = model
   input.permission(true)
   input.listening(true)
