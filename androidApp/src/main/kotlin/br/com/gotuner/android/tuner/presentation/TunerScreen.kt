@@ -42,6 +42,7 @@ private fun Double.fmt() = String.format(Locale.getDefault(), "%.1f", this)
   val instruction = when(state.tuningStatus) {
    TuningStatus.FLAT -> R.string.tighten_string
    TuningStatus.SHARP -> R.string.loosen_string
+   TuningStatus.IN_TUNE -> R.string.string_in_tune
    else -> null
   }
   instruction?.let {

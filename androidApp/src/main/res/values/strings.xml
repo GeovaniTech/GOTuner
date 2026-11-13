@@ -8,6 +8,7 @@
     <string name="cents_empty">— cents</string>
     <string name="tighten_string">Tighten string</string>
     <string name="loosen_string">Loosen string</string>
+    <string name="string_in_tune">In tune ✓</string>
     <string name="permission_rationale">Allow microphone access to tune your guitar.</string>
     <string name="enable_microphone">Enable microphone</string>
     <string name="open_settings">Open Settings</string>

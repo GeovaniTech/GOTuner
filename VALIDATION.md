@@ -72,3 +72,7 @@ Shared JVM tests (14) and Android debug build passed. Xcode Debug ARM64 simulato
 Verified google-services.json contains a client registered for br.com.gotuner. Added Google Services plugin 4.5.0, Crashlytics plugin 3.0.8, Firebase BoM 35.1.0, and the main Analytics/Crashlytics Android SDK modules. No shared or iOS Firebase dependency added.
 
 Shared feature tests and Android debug/unit-test build tasks passed. Google Services resource processing and Crashlytics build-ID injection completed. Merged Android manifest includes Firebase initialization and Internet permission. Firebase console receipt, Analytics DebugView and a deliberate test crash were not verified; README documents those steps. The user's google-services.json is unchanged.
+
+## Issue #14 — stable tuning result
+
+Removed the 1,500 ms hold: while listening, silence never clears the reading, so the last frequency, note, cents and indicator stay on screen until a new pitch arrives (stop and microphone errors still clear it). Raw pitches pass through a 5-frame median before the EMA to discard pluck-attack transients. In-tune is entered within ±7 cents and only left beyond ±12 cents of the same string (`TuningConfig.greenCents` / `releaseCents`), so harder or softer plucks keep the result. Both platforms show an "In tune ✓" banner.

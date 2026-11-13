@@ -7,6 +7,7 @@
 "cents_empty" = "— cents";
 "tighten_string" = "Aperte a corda";
 "loosen_string" = "Afrouxe a corda";
+"string_in_tune" = "Afinado";
 "permission_rationale" = "Permita o acesso ao microfone para afinar seu violão.";
 "enable_microphone" = "Ativar microfone";
 "open_settings" = "Abrir Ajustes";
