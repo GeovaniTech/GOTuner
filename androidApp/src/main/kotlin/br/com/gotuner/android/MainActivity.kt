@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.content.Intent
-import android.net.Uri
 import android.provider.Settings
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableStateOf
@@ -13,15 +12,13 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.gotuner.tuner.domain.audio.AudioSource
 import br.com.gotuner.app.TunerFactory
 import br.com.gotuner.android.tuner.data.AndroidAudioRecorder
 import br.com.gotuner.android.tuner.presentation.TunerScreen
+import br.com.gotuner.android.ui.theme.GOTunerTheme
 import androidx.core.net.toUri
 import androidx.core.content.edit
 
@@ -52,12 +49,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            MaterialTheme(
-                colorScheme = darkColorScheme(
-                    background = colorResource(R.color.launcher_background),
-                    surface = colorResource(R.color.launcher_background)
-                )
-            ) {
+            GOTunerTheme {
                 val state by model.state.collectAsStateWithLifecycle()
 
                 TunerScreen(state, permissionBlocked) {

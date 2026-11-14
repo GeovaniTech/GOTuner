@@ -15,10 +15,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.com.gotuner.android.R
+import br.com.gotuner.android.tuner.presentation.preview.PreviewContainer
+import br.com.gotuner.android.ui.theme.GOTunerColors
 
+/** Horizontal bar from -50 to +50 cents; the dot shows how far the string is from the target. */
 @Composable
 fun TuningIndicator(cents: Double?, tint: Color) {
     val marker by animateFloatAsState(
@@ -37,7 +41,7 @@ fun TuningIndicator(cents: Double?, tint: Color) {
             val width = size.width - 2 * left
 
             drawLine(
-                color = Color(0xFF41495C),
+                color = GOTunerColors.Track,
                 start = Offset(left, y),
                 end = Offset(left + width, y),
                 strokeWidth = 4.dp.toPx()
@@ -47,7 +51,7 @@ fun TuningIndicator(cents: Double?, tint: Color) {
                 val x = left + width * i / 10
 
                 drawLine(
-                    color = if (i == 5) Color(0xFF66E3AA) else Color(0xFF70788A),
+                    color = if (i == 5) GOTunerColors.Green else GOTunerColors.Tick,
                     start = Offset(x, y - 10),
                     end = Offset(x, y + 10),
                     strokeWidth = 2.dp.toPx()
@@ -99,5 +103,13 @@ fun TuningIndicator(cents: Double?, tint: Color) {
                 fontSize = 12.sp
             )
         }
+    }
+}
+
+@Preview(widthDp = 360)
+@Composable
+private fun TuningIndicatorPreview() {
+    PreviewContainer {
+        TuningIndicator(cents = -18.0, tint = GOTunerColors.Red)
     }
 }

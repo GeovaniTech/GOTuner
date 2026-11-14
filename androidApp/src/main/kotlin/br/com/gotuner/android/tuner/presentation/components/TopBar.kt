@@ -9,9 +9,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import br.com.gotuner.android.R
+import br.com.gotuner.android.tuner.presentation.preview.PreviewContainer
 
+/** App name on the left and the microphone status on the right. */
 @Composable
 fun TopBar(isListening: Boolean, modifier: Modifier = Modifier) {
     Row(
@@ -26,5 +29,13 @@ fun TopBar(isListening: Boolean, modifier: Modifier = Modifier) {
         )
 
         ListeningStatus(isListening = isListening)
+    }
+}
+
+@Preview(widthDp = 360)
+@Composable
+private fun TopBarPreview() {
+    PreviewContainer {
+        TopBar(isListening = true)
     }
 }

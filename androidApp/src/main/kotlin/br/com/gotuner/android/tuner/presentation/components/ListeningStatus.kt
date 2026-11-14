@@ -19,24 +19,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.currentStateAsState
 import br.com.gotuner.android.R
+import br.com.gotuner.android.tuner.presentation.preview.PreviewContainer
+import br.com.gotuner.android.ui.theme.GOTunerColors
 
 @Composable
 fun ListeningStatus(isListening: Boolean) {
     val lifecycle by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
-    val color = if (isListening) Color(0xFF66E3AA) else Color(0xFF9DA6BA)
+    val color = if (isListening) GOTunerColors.Green else GOTunerColors.Neutral
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         if (isListening) {
+            // Stop the pulse when backgrounded or paused. Compose also respects the
+            // system animator duration scale, including disabled animations.
             val animate = lifecycle.isAtLeast(Lifecycle.State.RESUMED)
 
             val pulse = if (animate) {
@@ -70,5 +74,21 @@ fun ListeningStatus(isListening: Boolean) {
             text = stringResource(if (isListening) R.string.listening else R.string.microphone_paused),
             color = color
         )
+    }
+}
+
+@Preview
+@Composable
+private fun ListeningStatusPreview() {
+    PreviewContainer {
+        ListeningStatus(isListening = true)
+    }
+}
+
+@Preview
+@Composable
+private fun ListeningStatusPausedPreview() {
+    PreviewContainer {
+        ListeningStatus(isListening = false)
     }
 }
