@@ -1,6 +1,7 @@
 package br.com.gotuner.android.tuner.presentation
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -27,8 +28,15 @@ private fun Double.fmt() = String.format(Locale.getDefault(), "%.1f", this)
  val tint = when(state.accuracyColor) { AccuracyColor.GREEN -> Color(0xFF66E3AA); AccuracyColor.YELLOW -> Color(0xFFFFD166); AccuracyColor.RED -> Color(0xFFFF737A); else -> Color(0xFF9DA6BA) }
  Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxSize()) {
  Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(28.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(24.dp)) {
-  Text(stringResource(R.string.app_name), fontSize = 28.sp, fontWeight = FontWeight.Bold)
-  ListeningStatus(state.isListening)
+
+  Row(
+   modifier = Modifier.fillMaxWidth(),
+   horizontalArrangement = Arrangement.SpaceBetween,
+   verticalAlignment = Alignment.CenterVertically
+  ) {
+   Text(stringResource(R.string.app_name), fontSize = 28.sp, fontWeight = FontWeight.Bold)
+   ListeningStatus(state.isListening)
+  }
   Spacer(Modifier.height(36.dp))
   BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
    val frequency = state.detectedFrequency?.fmt() ?: "--.-"
