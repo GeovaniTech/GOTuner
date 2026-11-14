@@ -17,13 +17,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import br.com.gotuner.tuner.domain.audio.AudioSource
 import br.com.gotuner.app.TunerFactory
 import br.com.gotuner.android.tuner.data.AndroidAudioRecorder
+import br.com.gotuner.android.tuner.data.AndroidTonePlayer
 import br.com.gotuner.android.tuner.presentation.TunerScreen
 import br.com.gotuner.android.ui.theme.GOTunerTheme
 import androidx.core.net.toUri
 import androidx.core.content.edit
 
 class MainActivity : ComponentActivity() {
-    private val model = TunerFactory.createViewModel()
+    private val model = TunerFactory.createViewModel(AndroidTonePlayer())
     private val audio: AudioSource by lazy { AndroidAudioRecorder(this, model) }
     private var foreground = false
     private var permissionBlocked by mutableStateOf(false)
@@ -52,7 +53,13 @@ class MainActivity : ComponentActivity() {
             GOTunerTheme {
                 val state by model.state.collectAsStateWithLifecycle()
 
-                TunerScreen(state, permissionBlocked) {
+                TunerScreen(
+                    state = state,
+                    permissionBlocked = permissionBlocked,
+                    strings = model.strings,
+                    onSelectString = model::selectString,
+                    onToggleReference = model::toggleReferenceTone
+                ) {
                     if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                         audio.stop(); audio.start()
                     } else if (permissionBlocked) startActivity(
@@ -86,6 +93,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         foreground = false
+        model.stopReferenceTone()
         audio.stop()
         super.onPause()
     }

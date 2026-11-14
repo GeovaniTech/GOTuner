@@ -37,11 +37,22 @@ YIN's normalized difference function selects the first sufficiently periodic min
 
 The marker covers ±50 cents and clamps visually; the numeric deviation retains the actual value. Flat means **tighten**, sharp means **loosen**. Silence displays `--.- Hz`. A confident pitch outside standard guitar targets still displays its measured Hz, with no target, tuning advice or marker.
 
+## String selection and reference tone
+
+Below the reading, a guitar neck shows the six strings from the thickest (6, E2) to the thinnest (1, E4).
+
+- **Automatic** (default): the closest string within 100 cents is detected and highlighted on the neck.
+- **Chosen string**: tapping a string locks the tuner onto it. Every reading is then compared with that string, up to 900 cents away (`TuningConfig.manualMaxDistance`), so a very loose string still gets "tighten" advice. The limit stays below an octave on purpose: a reading of the string's own harmonic shows its Hz without advice instead of telling the user to loosen a correct string. The Auto chip returns to automatic detection.
+- **Reference tone**: the Hear button plays the correct pitch of the chosen (or detected) string for two seconds. `ReferenceTone` synthesizes it in shared Kotlin from decaying harmonics at exact multiples of the string frequency, because phone speakers barely reproduce the 82–110 Hz fundamentals of the low strings. Readings pause while the tone sounds and for eight frames (about a third of a second) afterwards, so the tuner never measures its own speaker.
+- **Verdict**: the card above the neck always states what to do — tighten (pitch too low), loosen (pitch too high), in tune, or pluck a string. A string is marked with a green check after four consecutive in-tune readings and loses it after four consecutive out-of-tune readings; the neck caption counts the tuned strings.
+
+The chosen string and the tuned marks survive pauses, restarts of the capture and microphone errors. The neck and the reference tone are available without microphone permission, for tuning by ear.
+
 ## Tests and manual checks
 
-Shared tests cover six targets, cents calculations, configurable color boundaries, invalid/unsupported frequencies, silence/noise, 44.1/48 kHz sine waves, harmonic-rich signals, octave cases and stale state clearing.
+Shared tests cover six targets, cents calculations, configurable color boundaries, invalid/unsupported frequencies, silence/noise, 44.1/48 kHz sine waves, harmonic-rich signals, octave cases and stale state clearing. They also cover the chosen-string target and its harmonic limit, tuned-string marking, the reference tone's pitch on all six strings and the pause of readings while it plays.
 
-On each real device: grant and deny permission, pluck all six open strings, test ±20 cents, silence and room noise, background/foreground, connect/disconnect an audio route and interrupt recording. Real microphone accuracy, latency and lifecycle behavior require physical-device validation.
+On each real device: grant and deny permission, choose each string and play its reference tone at a normal media volume, pluck all six open strings, test ±20 cents, silence and room noise, background/foreground, connect/disconnect an audio route and interrupt recording. Real microphone accuracy, latency and lifecycle behavior require physical-device validation.
 
 Build verification results are recorded in `VALIDATION.md`.
 

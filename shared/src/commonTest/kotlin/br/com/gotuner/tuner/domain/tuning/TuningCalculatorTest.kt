@@ -27,4 +27,15 @@ class TuningCalculatorTest {
   assertEquals(TuningStatus.FLAT, otherString.status)
  }
  @Test fun invalidAndOctaves() { listOf(0.0,-1.0,Double.NaN,Double.POSITIVE_INFINITY,40.0,440.0,659.26,220.0).forEach { assertNull(calculator.calculate(it),"$it") }; assertEquals("E4",calculator.calculate(329.63)!!.target.note) }
+ @Test fun selectedStringOverridesClosestAndWidensRange() {
+  val low = calculator.strings.first { it.number == 6 }
+  val loose = calculator.calculate(70.0, selected = low)!!
+  assertEquals(low, loose.target); assertEquals(TuningStatus.FLAT, loose.status); assertEquals(AccuracyColor.RED, loose.color)
+  val nearA = calculator.calculate(110.0, selected = low)!!
+  assertEquals(low, nearA.target); assertEquals(TuningStatus.SHARP, nearA.status); assertEquals(500.0, nearA.cents, 1.0)
+  assertEquals(TuningStatus.IN_TUNE, calculator.calculate(82.41, selected = low)!!.status)
+  // Harmonics of the selected string (an octave or more away) never become tuning advice.
+  listOf(164.82, 247.23, 41.2).forEach { assertNull(calculator.calculate(it, selected = low), "$it") }
+  assertEquals(6, calculator.string(6)?.number); assertNull(calculator.string(7)); assertNull(calculator.string(null))
+ }
 }

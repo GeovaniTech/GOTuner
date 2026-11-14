@@ -3,7 +3,7 @@
     <string name="listening">Listening</string>
     <string name="microphone_paused">Microphone paused</string>
     <string name="frequency_unit">Hz</string>
-    <string name="target_reference">%1$s — %2$s Hz</string>
+    <string name="target_reference">String %1$d · %2$s — %3$s Hz</string>
     <string name="cents_value">%1$s cents</string>
     <string name="cents_empty">— cents</string>
     <string name="tighten_string">Tighten string</string>
@@ -21,4 +21,21 @@
     <string name="microphone_read_error">Microphone unavailable. Tap Retry.</string>
     <string name="microphone_access_error">Cannot access microphone. Check permissions and tap Retry.</string>
     <string name="privacy_policy">Privacy policy</string>
+    <string name="flat_detail">The note is too low</string>
+    <string name="sharp_detail">The note is too high</string>
+    <string name="in_tune_detail">This string is ready</string>
+    <string name="auto_mode">Auto</string>
+    <string name="hear_note">Hear %1$s</string>
+    <string name="hear_reference">Hear note</string>
+    <string name="stop_reference">Stop</string>
+    <string name="playing_reference">Playing %1$s</string>
+    <string name="playing_reference_detail">Reading paused until the sound ends</string>
+    <string name="tuned_progress">In tune: %1$d of %2$d</string>
+    <string name="string_ordinal">%1$d</string>
+    <string name="string_description">String %1$d, %2$s</string>
+    <string name="automatic_detection">Automatic detection</string>
+    <string name="pluck_any_string">Pluck a string</string>
+    <string name="pluck_any_string_detail">or choose one on the neck below</string>
+    <string name="pluck_selected_string">Pluck string %1$d</string>
+    <string name="pluck_selected_string_detail">Use “Hear %1$s” to listen to the note</string>
 </resources>
