@@ -121,4 +121,117 @@ class TunerViewModelTest {
   assertNotNull(model.state.value.detectedFrequency)
  }
 
+ private class FakeTonePlayer : TonePlayer {
+  var samples: FloatArray? = null; var sampleRate = 0; var stops = 0; var finish: (() -> Unit)? = null
+  override fun play(samples: FloatArray, sampleRate: Int, onFinished: () -> Unit) { this.samples = samples; this.sampleRate = sampleRate; finish = onFinished }
+  override fun stop() { stops++ }
+ }
+
+ @Test fun selectedStringStaysTheTargetForAnotherPitch() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  model.selectString(6)
+  assertEquals(6, model.state.value.selectedString)
+  assertEquals("E2", model.state.value.targetNote)
+  assertEquals(82.41, assertNotNull(model.state.value.targetFrequency), 1e-9)
+  assertNull(model.state.value.tuningStatus)
+  // 100 Hz is closer to A2, but the user asked for the 6th string: it reads as far too sharp.
+  repeat(4) { model.process(wave(100.0),48000) }
+  val state = model.state.value
+  assertEquals("E2", state.targetNote); assertEquals(6, state.targetString)
+  assertEquals(TuningStatus.SHARP, state.tuningStatus); assertEquals(AccuracyColor.RED, state.accuracyColor)
+  assertEquals(335.0, assertNotNull(state.deviationCents), 2.0)
+ }
+ @Test fun selectedStringIgnoresItsOwnHarmonic() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  model.selectString(6)
+  repeat(4) { model.process(wave(164.82),48000) }
+  val state = model.state.value
+  assertEquals(164.82, assertNotNull(state.detectedFrequency), 0.5)
+  assertEquals("E2", state.targetNote)
+  assertNull(state.tuningStatus); assertNull(state.deviationCents); assertNull(state.accuracyColor)
+ }
+ @Test fun changingStringClearsReadingAndAutoReturns() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  repeat(4) { model.process(wave(110.0),48000) }
+  assertEquals(5, model.state.value.targetString); assertNull(model.state.value.selectedString)
+  model.selectString(4)
+  assertNull(model.state.value.detectedFrequency); assertNull(model.state.value.tuningStatus)
+  assertEquals("D3", model.state.value.targetNote); assertTrue(model.state.value.isListening)
+  model.process(wave(146.83),48000)
+  assertNull(model.state.value.detectedFrequency)
+  model.process(wave(146.83),48000)
+  assertEquals(TuningStatus.IN_TUNE, model.state.value.tuningStatus)
+  model.selectString(null)
+  assertNull(model.state.value.selectedString); assertNull(model.state.value.targetNote); assertNull(model.state.value.targetString)
+  repeat(4) { model.process(wave(196.0),48000) }
+  assertEquals("G3", model.state.value.targetNote)
+  model.selectString(9)
+  assertNull(model.state.value.selectedString)
+ }
+ @Test fun selectionAndTunedStringsSurviveRestartAndErrors() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  repeat(8) { model.process(wave(110.0),48000) }
+  model.selectString(4)
+  model.listening(false); model.listening(true)
+  assertEquals(4, model.state.value.selectedString); assertEquals("D3", model.state.value.targetNote)
+  assertEquals(setOf(5), model.state.value.tunedStrings)
+  model.fail("Capture failed")
+  assertEquals(4, model.state.value.selectedString); assertEquals(setOf(5), model.state.value.tunedStrings)
+  assertFalse(model.state.value.isListening)
+ }
+ @Test fun stringIsMarkedTunedOnlyAfterAStableVerdict() {
+  val model = TunerFactory.createViewModel(); model.listening(true)
+  repeat(4) { model.process(wave(110.0),48000) }
+  assertEquals(TuningStatus.IN_TUNE, model.state.value.tuningStatus)
+  assertTrue(model.state.value.tunedStrings.isEmpty())
+  repeat(2) { model.process(wave(110.0),48000) }
+  assertEquals(setOf(5), model.state.value.tunedStrings)
+  repeat(8) { model.process(wave(146.83),48000) }
+  assertEquals(setOf(5, 4), model.state.value.tunedStrings)
+  // One attack spike does not unmark the string; a string that settles flat does.
+  model.process(wave(146.83 * 2.0.pow(40.0 / 1200)),48000)
+  assertEquals(setOf(5, 4), model.state.value.tunedStrings)
+  repeat(12) { model.process(wave(146.83 * 2.0.pow(-30.0 / 1200)),48000) }
+  assertEquals(TuningStatus.FLAT, model.state.value.tuningStatus)
+  assertEquals(setOf(5), model.state.value.tunedStrings)
+ }
+ @Test fun referenceTonePlaysTheTargetAndPausesReadings() {
+  val player = FakeTonePlayer()
+  val model = TunerFactory.createViewModel(player); model.listening(true)
+  model.toggleReferenceTone()
+  assertNull(player.samples); assertFalse(model.state.value.isPlayingReference)
+  model.selectString(5)
+  model.toggleReferenceTone()
+  assertTrue(model.state.value.isPlayingReference)
+  assertEquals(ReferenceTone.SAMPLE_RATE, player.sampleRate)
+  val estimate = assertNotNull(PitchDetector().detect(assertNotNull(player.samples).copyOfRange(4096, 8192), player.sampleRate))
+  assertEquals(110.0, estimate.frequency, 0.3)
+  // The microphone hears the phone's own tone: it must not become a reading.
+  repeat(10) { model.process(wave(110.0),48000) }
+  assertNull(model.state.value.detectedFrequency); assertTrue(model.state.value.tunedStrings.isEmpty())
+  assertNotNull(player.finish)()
+  assertFalse(model.state.value.isPlayingReference)
+  repeat(TunerViewModel.REFERENCE_TAIL_FRAMES) { model.process(wave(110.0),48000) }
+  assertNull(model.state.value.detectedFrequency)
+  repeat(2) { model.process(wave(108.0),48000) }
+  assertEquals(TuningStatus.FLAT, model.state.value.tuningStatus)
+ }
+ @Test fun referenceToneStopsOnSecondToggleAndOnStringChange() {
+  val player = FakeTonePlayer()
+  val model = TunerFactory.createViewModel(player); model.listening(true)
+  repeat(4) { model.process(wave(196.0),48000) }
+  model.toggleReferenceTone()
+  assertTrue(model.state.value.isPlayingReference)
+  assertEquals(196.0, assertNotNull(PitchDetector().detect(assertNotNull(player.samples).copyOfRange(4096, 8192), player.sampleRate)).frequency, 0.5)
+  assertEquals("G3", model.state.value.targetNote)
+  val staleFinish = assertNotNull(player.finish)
+  model.toggleReferenceTone()
+  assertFalse(model.state.value.isPlayingReference); assertEquals(1, player.stops)
+  model.toggleReferenceTone()
+  staleFinish()
+  assertTrue(model.state.value.isPlayingReference)
+  model.selectString(1)
+  assertFalse(model.state.value.isPlayingReference); assertEquals(2, player.stops)
+ }
+
 }

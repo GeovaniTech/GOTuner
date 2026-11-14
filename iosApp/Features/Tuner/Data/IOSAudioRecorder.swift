@@ -50,11 +50,7 @@ final class IOSAudioRecorder: AudioSource {
     private func startEngine() {
         guard engine == nil else { return }
         do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.record, mode: .measurement, options: [])
-            try session.setPreferredSampleRate(48000)
-            try session.setPreferredIOBufferDuration(0.02)
-            try session.setActive(true)
+            try TunerAudioSession.activate()
             let audio = AVAudioEngine()
             let input = audio.inputNode
             let format = input.outputFormat(forBus: 0)
@@ -92,6 +88,17 @@ final class IOSAudioRecorder: AudioSource {
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
     private enum AudioError: Error { case noInput }
+}
+/// One session setup for capture and the reference tone, so playing a tone never reroutes the microphone.
+/// Measurement mode keeps the input unprocessed; the speaker is used unless headphones are connected.
+enum TunerAudioSession {
+    static func activate() throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker])
+        try session.setPreferredSampleRate(48000)
+        try session.setPreferredIOBufferDuration(0.02)
+        try session.setActive(true)
+    }
 }
 private final class AudioSlot { var samples = [Float](repeating: 0, count: 8192) }
 private final class AudioBufferPool: @unchecked Sendable {
