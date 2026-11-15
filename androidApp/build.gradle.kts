@@ -8,7 +8,7 @@ plugins {
 }
 android {
  namespace = "br.com.gotuner.android"; compileSdk = 36
- defaultConfig { applicationId = "br.com.gotuner"; minSdk = 26; targetSdk = 36; versionCode = 1; versionName = "1.0.0"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+ defaultConfig { applicationId = "br.com.gotuner"; minSdk = 26; targetSdk = 36; versionCode = 2; versionName = "1.0.1"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
  buildFeatures { compose = true; buildConfig = true }
  val privacyUrl = providers.environmentVariable("GOTUNER_PRIVACY_POLICY_URL").orElse("").get()
  require(privacyUrl.isEmpty() || (URI(privacyUrl).scheme == "https" && !URI(privacyUrl).host.isNullOrBlank())) { "Privacy policy URL must be an HTTPS URL." }
