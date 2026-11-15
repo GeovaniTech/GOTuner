@@ -1,6 +1,5 @@
 package br.com.gotuner.android.tuner.presentation.components
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -8,9 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,12 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -45,7 +37,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,14 +46,11 @@ import br.com.gotuner.android.ui.theme.GOTunerColors
 import br.com.gotuner.tuner.domain.model.GuitarString
 import br.com.gotuner.tuner.domain.model.StandardTuning
 
-/** Space above the nut that holds each string's number and note badge. */
-private val HeadHeight = 80.dp
-private val NeckHeight = 92.dp
 private val BadgeSize = 44.dp
 
 /**
- * Guitar neck where the user picks the string to tune, plus the automatic mode switch and the
- * reference tone. [selectedString] is the user's choice; [targetString] is what the tuner is
+ * Row of note buttons where the user picks the string to tune, plus the automatic mode switch and
+ * the reference tone. [selectedString] is the user's choice; [targetString] is what the tuner is
  * currently comparing against, which in automatic mode is the detected string.
  */
 @Composable
@@ -78,7 +66,6 @@ fun StringSelector(
     modifier: Modifier = Modifier
 ) {
     val activeString = selectedString ?: targetString
-    val tunedCount = strings.count { it.number in tunedStrings }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -105,21 +92,13 @@ fun StringSelector(
             )
         }
 
-        GuitarNeck(
+        StringButtons(
             strings = strings,
             selectedString = selectedString,
             activeString = activeString,
             tunedStrings = tunedStrings,
             tint = tint,
             onSelectString = onSelectString
-        )
-
-        Text(
-            text = stringResource(R.string.tuned_progress, tunedCount, strings.size),
-            modifier = Modifier.fillMaxWidth(),
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
-            color = if (tunedCount == strings.size) GOTunerColors.Green else GOTunerColors.Neutral
         )
     }
 }
@@ -146,9 +125,9 @@ private fun ReferenceToneButton(note: String?, isPlaying: Boolean, onToggle: () 
     }
 }
 
-/** Six strings over a fretboard; each column, from badge to the end of the neck, selects its string. */
+/** One button per string, thickest first; the whole column, number and badge, selects its string. */
 @Composable
-private fun GuitarNeck(
+private fun StringButtons(
     strings: List<GuitarString>,
     selectedString: Int?,
     activeString: Int?,
@@ -156,130 +135,48 @@ private fun GuitarNeck(
     tint: Color,
     onSelectString: (Int?) -> Unit
 ) {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(HeadHeight + NeckHeight)
+            .selectableGroup()
     ) {
-        Canvas(modifier = Modifier.matchParentSize()) {
-            val column = size.width / strings.size
-            val nutY = HeadHeight.toPx()
-            val boardLeft = (column / 2 - 20.dp.toPx()).coerceAtLeast(0f)
-            val boardWidth = size.width - 2 * boardLeft
-            val neckLength = size.height - nutY
+        strings.forEach { string ->
+            val tuned = string.number in tunedStrings
+            val description = stringResource(R.string.string_description, string.number, string.note)
+            val tunedDescription = stringResource(R.string.in_tune)
 
-            // The neck fades out at the bottom: it continues beyond what is drawn.
-            drawRect(
-                brush = Brush.verticalGradient(
-                    colors = listOf(GOTunerColors.Fretboard, GOTunerColors.Fretboard.copy(alpha = 0f)),
-                    startY = nutY,
-                    endY = size.height
-                ),
-                topLeft = Offset(boardLeft, nutY),
-                size = Size(boardWidth, neckLength)
-            )
-
-            for ((position, alpha) in listOf(0.46f to 0.7f, 0.86f to 0.3f)) {
-                val y = nutY + neckLength * position
-
-                drawLine(
-                    color = GOTunerColors.Fret.copy(alpha = alpha),
-                    start = Offset(boardLeft, y),
-                    end = Offset(boardLeft + boardWidth, y),
-                    strokeWidth = 2.dp.toPx()
-                )
-            }
-
-            drawRoundRect(
-                color = GOTunerColors.Nut,
-                topLeft = Offset(boardLeft - 2.dp.toPx(), nutY - 3.dp.toPx()),
-                size = Size(boardWidth + 4.dp.toPx(), 6.dp.toPx()),
-                cornerRadius = CornerRadius(3.dp.toPx())
-            )
-
-            strings.forEachIndexed { index, string ->
-                val x = column * (index + 0.5f)
-                // Thickest string first, as on the instrument.
-                val width = (4.2f - 0.55f * index).coerceAtLeast(1.4f).dp.toPx()
-                val top = nutY - 12.dp.toPx()
-                val color = when {
-                    string.number == activeString -> tint
-                    string.number in tunedStrings -> GOTunerColors.Green
-                    index < strings.size / 2 -> GOTunerColors.WoundString
-                    else -> GOTunerColors.PlainString
-                }
-
-                if (string.number == activeString) {
-                    drawLine(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(color.copy(alpha = 0.28f), Color.Transparent),
-                            startY = top,
-                            endY = size.height
-                        ),
-                        start = Offset(x, top),
-                        end = Offset(x, size.height),
-                        strokeWidth = width + 10.dp.toPx(),
-                        cap = StrokeCap.Round
-                    )
-                }
-
-                drawLine(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(color, color.copy(alpha = 0.1f)),
-                        startY = nutY,
-                        endY = size.height
-                    ),
-                    start = Offset(x, top),
-                    end = Offset(x, size.height),
-                    strokeWidth = width
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .matchParentSize()
-                .selectableGroup()
-        ) {
-            strings.forEach { string ->
-                val tuned = string.number in tunedStrings
-                val description = stringResource(R.string.string_description, string.number, string.note)
-                val tunedDescription = stringResource(R.string.in_tune)
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(12.dp))
-                        .selectable(
-                            selected = string.number == selectedString,
-                            role = Role.RadioButton,
-                            onClick = { onSelectString(string.number) }
-                        )
-                        .semantics {
-                            contentDescription = description
-                            if (tuned) stateDescription = tunedDescription
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(R.string.string_ordinal, string.number),
-                        modifier = Modifier
-                            .padding(top = 2.dp, bottom = 4.dp)
-                            .clearAndSetSemantics { },
-                        fontSize = 12.sp,
-                        color = GOTunerColors.Neutral
-                    )
-
-                    NoteBadge(
-                        note = string.note,
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(12.dp))
+                    .selectable(
                         selected = string.number == selectedString,
-                        active = string.number == activeString,
-                        tuned = tuned,
-                        tint = tint,
-                        modifier = Modifier.clearAndSetSemantics { }
+                        role = Role.RadioButton,
+                        onClick = { onSelectString(string.number) }
                     )
-                }
+                    .semantics {
+                        contentDescription = description
+                        if (tuned) stateDescription = tunedDescription
+                    }
+                    .padding(vertical = 6.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.string_ordinal, string.number),
+                    modifier = Modifier.clearAndSetSemantics { },
+                    fontSize = 12.sp,
+                    color = GOTunerColors.Neutral
+                )
+
+                NoteBadge(
+                    note = string.note,
+                    selected = string.number == selectedString,
+                    active = string.number == activeString,
+                    tuned = tuned,
+                    tint = tint,
+                    modifier = Modifier.clearAndSetSemantics { }
+                )
             }
         }
     }

@@ -17,15 +17,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import br.com.gotuner.android.BuildConfig
-import br.com.gotuner.android.tuner.presentation.components.CentsReadout
 import br.com.gotuner.android.tuner.presentation.components.ErrorMessage
-import br.com.gotuner.android.tuner.presentation.components.FrequencyDisplay
+import br.com.gotuner.android.tuner.presentation.components.NoteStrip
 import br.com.gotuner.android.tuner.presentation.components.PermissionRequest
 import br.com.gotuner.android.tuner.presentation.components.PrivacyPolicyLink
 import br.com.gotuner.android.tuner.presentation.components.StringSelector
-import br.com.gotuner.android.tuner.presentation.components.TargetNote
 import br.com.gotuner.android.tuner.presentation.components.TopBar
-import br.com.gotuner.android.tuner.presentation.components.TuningIndicator
 import br.com.gotuner.android.tuner.presentation.components.TuningInstruction
 import br.com.gotuner.android.tuner.presentation.preview.TunerPreviewStates
 import br.com.gotuner.android.tuner.presentation.preview.TunerUiStatePreviewProvider
@@ -37,7 +34,7 @@ import br.com.gotuner.tuner.presentation.MicrophonePermissionState
 import br.com.gotuner.tuner.presentation.TunerUiState
 
 /**
- * Tuner screen: header, then either the permission request or the live reading, then the neck
+ * Tuner screen: header, then either the permission request or the live reading, then the buttons
  * where the string is chosen and its reference tone played, then errors and links.
  */
 @Composable
@@ -91,20 +88,14 @@ fun TunerScreen(
     }
 }
 
-/** Live reading: target string, frequency, deviation bar, cents and the verdict on what to do. */
+/** Live reading: the note strip showing the closest note, and the verdict on what to do. */
 @Composable
 private fun TuningReading(state: TunerUiState, tint: Color) {
-    TargetNote(
-        stringNumber = state.targetString,
-        note = state.targetNote,
-        targetFrequency = state.targetFrequency
+    NoteStrip(
+        frequency = state.detectedFrequency,
+        targetFrequency = state.targetFrequency,
+        tint = tint
     )
-
-    FrequencyDisplay(frequency = state.detectedFrequency, tint = tint)
-
-    // TuningIndicator(cents = state.deviationCents, tint = tint)
-
-    CentsReadout(cents = state.deviationCents, tint = tint)
 
     TuningInstruction(
         status = state.tuningStatus,

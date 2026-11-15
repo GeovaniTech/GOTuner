@@ -20,7 +20,7 @@ androidApp/src/main/kotlin/br/com/gotuner/android/
     data/             # AudioRecord adapter and AudioTrack tone player
     presentation/
       TunerScreen.kt
-      components/     # Reading, verdict and string selector (neck) components
+      components/     # Note strip, verdict and string selector components
 
 iosApp/
   GuitarTunerApp.swift
@@ -30,7 +30,7 @@ iosApp/
     Presentation/
       TunerStore.swift # Native StateFlow/ObservableObject adapter
       TunerScreen.swift
-      Components/     # Tuning indicator, verdict, string selector (neck) and listening status
+      Components/     # Note strip, verdict, string selector and listening status
 ```
 
 The domain layer is shared Kotlin. It contains no platform UI, Android/iOS APIs or presentation dependencies. Data implementations live on the platform that owns microphone capture; there is no empty shared data layer or duplicated native domain layer.

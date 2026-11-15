@@ -15,11 +15,6 @@ object GOTunerColors {
     val Neutral = Color(0xFF9DA6BA)
     val Track = Color(0xFF41495C)
     val Tick = Color(0xFF70788A)
-    val Fretboard = Color(0xFF2E2622)
-    val Fret = Color(0xFF8A90A0)
-    val Nut = Color(0xFFE9E3D2)
-    val WoundString = Color(0xFFC9A46B)
-    val PlainString = Color(0xFFD5DAE3)
 }
 
 /** Color used for the reading, cents and instruction for a given tuning accuracy. */

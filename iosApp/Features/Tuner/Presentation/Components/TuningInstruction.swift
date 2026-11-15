@@ -3,8 +3,8 @@ import Shared
 
 /// Highlighted verdict for the user: tighten, loosen or in tune, each with a one-line reason.
 /// While the reference tone sounds it says so instead, because readings are paused. Without a
-/// verdict it asks for a string to be plucked, so the card keeps its place and the neck below it
-/// does not jump when a reading arrives.
+/// verdict it asks for a string to be plucked, so the card keeps its place and the string buttons
+/// below it do not jump when a reading arrives.
 struct TuningInstruction: View {
     let status: TuningStatus?
     let tint: Color
