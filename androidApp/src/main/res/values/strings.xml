@@ -35,7 +35,7 @@
     <string name="string_description">String %1$d, %2$s</string>
     <string name="automatic_detection">Automatic detection</string>
     <string name="pluck_any_string">Pluck a string</string>
-    <string name="pluck_any_string_detail">or choose one on the neck below</string>
+    <string name="pluck_any_string_detail">or choose one below</string>
     <string name="pluck_selected_string">Pluck string %1$d</string>
     <string name="pluck_selected_string_detail">Use “Hear %1$s” to listen to the note</string>
 </resources>

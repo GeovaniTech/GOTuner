@@ -35,7 +35,7 @@
     <string name="string_description">Corda %1$d, %2$s</string>
     <string name="automatic_detection">Detecção automática</string>
     <string name="pluck_any_string">Toque uma corda</string>
-    <string name="pluck_any_string_detail">ou escolha uma no braço abaixo</string>
+    <string name="pluck_any_string_detail">ou escolha uma abaixo</string>
     <string name="pluck_selected_string">Toque a %1$dª corda</string>
     <string name="pluck_selected_string_detail">Use “Ouvir %1$s” para escutar a nota</string>
 </resources>

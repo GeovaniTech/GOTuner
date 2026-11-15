@@ -37,7 +37,7 @@ import br.com.gotuner.tuner.presentation.MicrophonePermissionState
 import br.com.gotuner.tuner.presentation.TunerUiState
 
 /**
- * Tuner screen: header, then either the permission request or the live reading, then the neck
+ * Tuner screen: header, then either the permission request or the live reading, then the buttons
  * where the string is chosen and its reference tone played, then errors and links.
  */
 @Composable

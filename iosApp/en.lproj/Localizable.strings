@@ -30,7 +30,7 @@
 "playing_reference_detail" = "Reading paused until the sound ends";
 "automatic_detection" = "Automatic detection";
 "pluck_any_string" = "Pluck a string";
-"pluck_any_string_detail" = "or choose one on the neck below";
+"pluck_any_string_detail" = "or choose one below";
 "pluck_selected_string" = "Pluck string %ld";
 "pluck_selected_string_detail" = "Use “Hear %@” to listen to the note";
 "tuned_progress" = "In tune: %1$ld of %2$ld";

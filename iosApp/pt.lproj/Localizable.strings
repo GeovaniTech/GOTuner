@@ -30,7 +30,7 @@
 "playing_reference_detail" = "Leitura pausada até o som terminar";
 "automatic_detection" = "Detecção automática";
 "pluck_any_string" = "Toque uma corda";
-"pluck_any_string_detail" = "ou escolha uma no braço abaixo";
+"pluck_any_string_detail" = "ou escolha uma abaixo";
 "pluck_selected_string" = "Toque a %ldª corda";
 "pluck_selected_string_detail" = "Use “Ouvir %@” para escutar a nota";
 "tuned_progress" = "Afinadas: %1$ld de %2$ld";
