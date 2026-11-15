@@ -35,18 +35,18 @@ YIN's normalized difference function selects the first sufficiently periodic min
 
 `TuningConfig` configures green (≤5 cents), yellow (≤15 cents), and maximum supported target distance (100 cents). Targets are selected by absolute cents distance. Frequencies beyond that distance are rejected, not folded into another octave. E4 is a valid target even though it can also be an E2 harmonic: audio alone cannot disambiguate a pure overtone with no fundamental evidence. Harmonic-rich waveforms are tested with a dominant second harmonic. This is an open-string tuner, not a chromatic tuner.
 
-The marker covers ±50 cents and clamps visually; the numeric deviation retains the actual value. Flat means **tighten**, sharp means **loosen**. Silence displays `--.- Hz`. A confident pitch outside standard guitar targets still displays its measured Hz, with no target, tuning advice or marker.
+The reading is shown on a **note strip**: every note of the chromatic scale (`NoteScale`, A4 = 440 Hz) slides under a fixed pointer, with one tick every 10 cents, so the note under the pointer is the one the sound is closest to. The note of the string being tuned stands out from its neighbours and the measured Hz is written in small type under the pointer. Flat means **tighten**, sharp means **loosen**. Silence displays `--.- Hz` with the strip resting on the chosen string (or on E2). A confident pitch outside standard guitar targets still moves the strip and displays its measured Hz, with no target or tuning advice.
 
 ## String selection and reference tone
 
-Below the reading, a guitar neck shows the six strings from the thickest (6, E2) to the thinnest (1, E4).
+Below the reading, a row of buttons shows the six strings from the thickest (6, E2) to the thinnest (1, E4).
 
-- **Automatic** (default): the closest string within 100 cents is detected and highlighted on the neck.
+- **Automatic** (default): the closest string within 100 cents is detected and its button highlighted.
 - **Chosen string**: tapping a string locks the tuner onto it. Every reading is then compared with that string, up to 900 cents away (`TuningConfig.manualMaxDistance`), so a very loose string still gets "tighten" advice. The limit stays below an octave on purpose: a reading of the string's own harmonic shows its Hz without advice instead of telling the user to loosen a correct string. The Auto chip returns to automatic detection.
 - **Reference tone**: the Hear button plays the correct pitch of the chosen (or detected) string for two seconds. `ReferenceTone` synthesizes it in shared Kotlin from decaying harmonics at exact multiples of the string frequency, because phone speakers barely reproduce the 82–110 Hz fundamentals of the low strings. Readings pause while the tone sounds and for eight frames (about a third of a second) afterwards, so the tuner never measures its own speaker.
-- **Verdict**: the card above the neck always states what to do — tighten (pitch too low), loosen (pitch too high), in tune, or pluck a string. A string is marked with a green check after four consecutive in-tune readings and loses it after four consecutive out-of-tune readings; the neck caption counts the tuned strings.
+- **Verdict**: the card above the buttons always states what to do — tighten (pitch too low), loosen (pitch too high), in tune, or pluck a string. A string is marked with a green check after four consecutive in-tune readings and loses it after four consecutive out-of-tune readings.
 
-The chosen string and the tuned marks survive pauses, restarts of the capture and microphone errors. The neck and the reference tone are available without microphone permission, for tuning by ear.
+The chosen string and the tuned marks survive pauses, restarts of the capture and microphone errors. The string buttons and the reference tone are available without microphone permission, for tuning by ear.
 
 ## Tests and manual checks
 
