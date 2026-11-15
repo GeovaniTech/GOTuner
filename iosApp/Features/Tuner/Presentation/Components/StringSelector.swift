@@ -127,7 +127,9 @@ enum TunerPalette {
     static let background = Color(red: 0.06, green: 0.075, blue: 0.105)
     static let green = Color(red: 0.4, green: 0.89, blue: 0.67)
     static let red = Color(red: 1, green: 0.45, blue: 0.48)
+    static let neutral = Color(red: 0.616, green: 0.651, blue: 0.729)
     static let track = Color(red: 0.255, green: 0.286, blue: 0.361)
+    static let tick = Color(red: 0.439, green: 0.471, blue: 0.541)
 }
 
 #Preview {

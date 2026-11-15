@@ -2,8 +2,6 @@
 "listening" = "Listening";
 "microphone_paused" = "Microphone paused";
 "frequency_unit" = "Hz";
-"cents_value" = "%@ cents";
-"cents_empty" = "— cents";
 "tighten_string" = "Tighten string";
 "loosen_string" = "Loosen string";
 "string_in_tune" = "In tune";
@@ -11,11 +9,7 @@
 "enable_microphone" = "Enable microphone";
 "open_settings" = "Open Settings";
 "retry" = "Retry";
-"flat" = "Flat";
 "in_tune" = "In Tune";
-"sharp" = "Sharp";
-"tighten_direction" = "Tighten →";
-"loosen_direction" = "← Loosen";
 "microphone_read_error" = "Microphone unavailable. Tap Retry.";
 "microphone_access_error" = "Cannot access microphone. Check access in Settings and retry.";
 "flat_detail" = "The note is too low";
@@ -33,3 +27,5 @@
 "pluck_selected_string_detail" = "Use “Hear %@” to listen to the note";
 "string_ordinal" = "%ld";
 "string_description" = "String %1$ld, %2$@";
+"closest_note" = "Closest note: %1$@, %2$@";
+"no_note_detected" = "No note detected";

@@ -2,8 +2,6 @@
 "listening" = "Ouvindo";
 "microphone_paused" = "Microfone pausado";
 "frequency_unit" = "Hz";
-"cents_value" = "%@ cents";
-"cents_empty" = "— cents";
 "tighten_string" = "Aperte a corda";
 "loosen_string" = "Afrouxe a corda";
 "string_in_tune" = "Afinado";
@@ -11,11 +9,7 @@
 "enable_microphone" = "Ativar microfone";
 "open_settings" = "Abrir Ajustes";
 "retry" = "Tentar novamente";
-"flat" = "Grave";
 "in_tune" = "Afinado";
-"sharp" = "Agudo";
-"tighten_direction" = "Apertar →";
-"loosen_direction" = "← Afrouxar";
 "microphone_read_error" = "Microfone indisponível. Toque em Tentar novamente.";
 "microphone_access_error" = "Não foi possível acessar o microfone. Verifique o acesso nos Ajustes e tente novamente.";
 "flat_detail" = "O som está abaixo da nota";
@@ -33,3 +27,5 @@
 "pluck_selected_string_detail" = "Use “Ouvir %@” para escutar a nota";
 "string_ordinal" = "%ldª";
 "string_description" = "Corda %1$ld, %2$@";
+"closest_note" = "Nota mais próxima: %1$@, %2$@";
+"no_note_detected" = "Nenhuma nota detectada";

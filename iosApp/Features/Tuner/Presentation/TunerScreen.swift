@@ -13,13 +13,8 @@ struct TunerScreen: View {
             VStack(spacing: 16) {
                 Text("app_name").font(.largeTitle.bold())
                 ListeningStatus(isListening: state.isListening)
-                VStack(spacing: 0) {
-                    Text(state.detectedFrequency.map { String(format: "%.1f", locale: Locale.current, $0.doubleValue) } ?? "--.-")
-                        .font(.system(size: 68, weight: .bold, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1).foregroundStyle(tint)
-                    Text("frequency_unit").foregroundStyle(tint)
-                }
-                TuningIndicator(cents: state.deviationCents?.doubleValue, tint: tint)
-                Text(state.deviationCents.map { String(format: NSLocalizedString("cents_value", comment: "Pitch deviation"), String(format: "%+.1f", locale: Locale.current, $0.doubleValue)) } ?? NSLocalizedString("cents_empty", comment: "No pitch")).foregroundStyle(tint)
+                NoteStrip(frequency: state.detectedFrequency?.doubleValue,
+                          targetFrequency: state.targetFrequency?.doubleValue, tint: tint)
                 TuningInstruction(status: state.tuningStatus, tint: tint,
                                   selectedString: state.selectedString?.int32Value,
                                   selectedNote: state.selectedString == nil ? nil : state.targetNote,

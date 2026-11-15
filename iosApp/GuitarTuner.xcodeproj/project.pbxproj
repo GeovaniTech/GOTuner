@@ -4,7 +4,7 @@
 000000000000000000000262 = { isa = PBXBuildFile; fileRef = 000000000000000000000258; };
 000000000000000000000259 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Tuner/Presentation/TunerStore.swift"; sourceTree = "<group>"; };
 000000000000000000000263 = { isa = PBXBuildFile; fileRef = 000000000000000000000259; };
-00000000000000000000025A = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Tuner/Presentation/Components/TuningIndicator.swift"; sourceTree = "<group>"; };
+00000000000000000000025A = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Tuner/Presentation/Components/NoteStrip.swift"; sourceTree = "<group>"; };
 000000000000000000000264 = { isa = PBXBuildFile; fileRef = 00000000000000000000025A; };
 00000000000000000000025B = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Features/Tuner/Presentation/Components/ListeningStatus.swift"; sourceTree = "<group>"; };
 000000000000000000000265 = { isa = PBXBuildFile; fileRef = 00000000000000000000025B; };
