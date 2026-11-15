@@ -3,7 +3,6 @@
     <string name="listening">Ouvindo</string>
     <string name="microphone_paused">Microfone pausado</string>
     <string name="frequency_unit">Hz</string>
-    <string name="target_reference">%1$dª corda · %2$s — %3$s Hz</string>
     <string name="cents_value">%1$s cents</string>
     <string name="cents_empty">— cents</string>
     <string name="tighten_string">Aperte a corda</string>
@@ -30,10 +29,8 @@
     <string name="stop_reference">Parar</string>
     <string name="playing_reference">Tocando %1$s</string>
     <string name="playing_reference_detail">Leitura pausada até o som terminar</string>
-    <string name="tuned_progress">Afinadas: %1$d de %2$d</string>
     <string name="string_ordinal">%1$dª</string>
     <string name="string_description">Corda %1$d, %2$s</string>
-    <string name="automatic_detection">Detecção automática</string>
     <string name="pluck_any_string">Toque uma corda</string>
     <string name="pluck_any_string_detail">ou escolha uma abaixo</string>
     <string name="pluck_selected_string">Toque a %1$dª corda</string>

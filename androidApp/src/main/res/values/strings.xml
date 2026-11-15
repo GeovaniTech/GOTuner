@@ -3,7 +3,6 @@
     <string name="listening">Listening</string>
     <string name="microphone_paused">Microphone paused</string>
     <string name="frequency_unit">Hz</string>
-    <string name="target_reference">String %1$d · %2$s — %3$s Hz</string>
     <string name="cents_value">%1$s cents</string>
     <string name="cents_empty">— cents</string>
     <string name="tighten_string">Tighten string</string>
@@ -30,10 +29,8 @@
     <string name="stop_reference">Stop</string>
     <string name="playing_reference">Playing %1$s</string>
     <string name="playing_reference_detail">Reading paused until the sound ends</string>
-    <string name="tuned_progress">In tune: %1$d of %2$d</string>
     <string name="string_ordinal">%1$d</string>
     <string name="string_description">String %1$d, %2$s</string>
-    <string name="automatic_detection">Automatic detection</string>
     <string name="pluck_any_string">Pluck a string</string>
     <string name="pluck_any_string_detail">or choose one below</string>
     <string name="pluck_selected_string">Pluck string %1$d</string>

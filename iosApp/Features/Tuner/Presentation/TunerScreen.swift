@@ -13,11 +13,6 @@ struct TunerScreen: View {
             VStack(spacing: 16) {
                 Text("app_name").font(.largeTitle.bold())
                 ListeningStatus(isListening: state.isListening)
-                if let note = state.targetNote, let string = state.targetString {
-                    Text(String(format: NSLocalizedString("target_reference", comment: "String number, note and reference frequency"), string.intValue, note, String(format: "%.1f", locale: Locale.current, state.targetFrequency?.doubleValue ?? 0))).font(.title3)
-                } else {
-                    Text("automatic_detection").font(.title3).foregroundStyle(.gray)
-                }
                 VStack(spacing: 0) {
                     Text(state.detectedFrequency.map { String(format: "%.1f", locale: Locale.current, $0.doubleValue) } ?? "--.-")
                         .font(.system(size: 68, weight: .bold, design: .rounded)).minimumScaleFactor(0.5).lineLimit(1).foregroundStyle(tint)

@@ -37,7 +37,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,7 +66,6 @@ fun StringSelector(
     modifier: Modifier = Modifier
 ) {
     val activeString = selectedString ?: targetString
-    val tunedCount = strings.count { it.number in tunedStrings }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -101,14 +99,6 @@ fun StringSelector(
             tunedStrings = tunedStrings,
             tint = tint,
             onSelectString = onSelectString
-        )
-
-        Text(
-            text = stringResource(R.string.tuned_progress, tunedCount, strings.size),
-            modifier = Modifier.fillMaxWidth(),
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
-            color = if (tunedCount == strings.size) GOTunerColors.Green else GOTunerColors.Neutral
         )
     }
 }

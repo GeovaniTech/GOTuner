@@ -15,7 +15,6 @@ struct StringSelector: View {
     let onToggleReference: () -> Void
 
     private var activeString: Int32? { selectedString ?? targetString }
-    private var tunedCount: Int { strings.filter { tunedStrings.contains($0.number) }.count }
 
     var body: some View {
         VStack(spacing: 12) {
@@ -26,8 +25,6 @@ struct StringSelector: View {
             }
             StringButtons(strings: strings, selectedString: selectedString, activeString: activeString,
                           tunedStrings: tunedStrings, tint: tint, onSelectString: onSelectString)
-            Text(caption).font(.footnote).multilineTextAlignment(.center)
-                .foregroundStyle(tunedCount == strings.count ? TunerPalette.green : .gray)
         }
     }
 
@@ -58,10 +55,6 @@ struct StringSelector: View {
         }
         .buttonStyle(.bordered)
         .disabled(!isPlayingReference && note == nil)
-    }
-
-    private var caption: String {
-        String(format: NSLocalizedString("tuned_progress", comment: "Strings in tune"), tunedCount, strings.count)
     }
 }
 

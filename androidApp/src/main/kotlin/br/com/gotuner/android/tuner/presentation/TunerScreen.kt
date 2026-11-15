@@ -23,7 +23,6 @@ import br.com.gotuner.android.tuner.presentation.components.FrequencyDisplay
 import br.com.gotuner.android.tuner.presentation.components.PermissionRequest
 import br.com.gotuner.android.tuner.presentation.components.PrivacyPolicyLink
 import br.com.gotuner.android.tuner.presentation.components.StringSelector
-import br.com.gotuner.android.tuner.presentation.components.TargetNote
 import br.com.gotuner.android.tuner.presentation.components.TopBar
 import br.com.gotuner.android.tuner.presentation.components.TuningIndicator
 import br.com.gotuner.android.tuner.presentation.components.TuningInstruction
@@ -91,15 +90,9 @@ fun TunerScreen(
     }
 }
 
-/** Live reading: target string, frequency, deviation bar, cents and the verdict on what to do. */
+/** Live reading: frequency, deviation bar, cents and the verdict on what to do. */
 @Composable
 private fun TuningReading(state: TunerUiState, tint: Color) {
-    TargetNote(
-        stringNumber = state.targetString,
-        note = state.targetNote,
-        targetFrequency = state.targetFrequency
-    )
-
     FrequencyDisplay(frequency = state.detectedFrequency, tint = tint)
 
     // TuningIndicator(cents = state.deviationCents, tint = tint)

@@ -2,7 +2,6 @@
 "listening" = "Listening";
 "microphone_paused" = "Microphone paused";
 "frequency_unit" = "Hz";
-"target_reference" = "String %1$ld · %2$@ — %3$@ Hz";
 "cents_value" = "%@ cents";
 "cents_empty" = "— cents";
 "tighten_string" = "Tighten string";
@@ -28,11 +27,9 @@
 "stop_reference" = "Stop";
 "playing_reference" = "Playing %@";
 "playing_reference_detail" = "Reading paused until the sound ends";
-"automatic_detection" = "Automatic detection";
 "pluck_any_string" = "Pluck a string";
 "pluck_any_string_detail" = "or choose one below";
 "pluck_selected_string" = "Pluck string %ld";
 "pluck_selected_string_detail" = "Use “Hear %@” to listen to the note";
-"tuned_progress" = "In tune: %1$ld of %2$ld";
 "string_ordinal" = "%ld";
 "string_description" = "String %1$ld, %2$@";
