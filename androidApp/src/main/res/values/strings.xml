@@ -3,8 +3,6 @@
     <string name="listening">Listening</string>
     <string name="microphone_paused">Microphone paused</string>
     <string name="frequency_unit">Hz</string>
-    <string name="cents_value">%1$s cents</string>
-    <string name="cents_empty">— cents</string>
     <string name="tighten_string">Tighten string</string>
     <string name="loosen_string">Loosen string</string>
     <string name="string_in_tune">In tune ✓</string>
@@ -12,11 +10,7 @@
     <string name="enable_microphone">Enable microphone</string>
     <string name="open_settings">Open Settings</string>
     <string name="retry">Retry</string>
-    <string name="flat">Flat</string>
     <string name="in_tune">In Tune</string>
-    <string name="sharp">Sharp</string>
-    <string name="tighten_direction">Tighten →</string>
-    <string name="loosen_direction">← Loosen</string>
     <string name="microphone_read_error">Microphone unavailable. Tap Retry.</string>
     <string name="microphone_access_error">Cannot access microphone. Check permissions and tap Retry.</string>
     <string name="privacy_policy">Privacy policy</string>
@@ -35,4 +29,6 @@
     <string name="pluck_any_string_detail">or choose one below</string>
     <string name="pluck_selected_string">Pluck string %1$d</string>
     <string name="pluck_selected_string_detail">Use “Hear %1$s” to listen to the note</string>
+    <string name="closest_note">Closest note: %1$s, %2$s</string>
+    <string name="no_note_detected">No note detected</string>
 </resources>

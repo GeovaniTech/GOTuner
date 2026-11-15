@@ -17,14 +17,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import br.com.gotuner.android.BuildConfig
-import br.com.gotuner.android.tuner.presentation.components.CentsReadout
 import br.com.gotuner.android.tuner.presentation.components.ErrorMessage
-import br.com.gotuner.android.tuner.presentation.components.FrequencyDisplay
+import br.com.gotuner.android.tuner.presentation.components.NoteStrip
 import br.com.gotuner.android.tuner.presentation.components.PermissionRequest
 import br.com.gotuner.android.tuner.presentation.components.PrivacyPolicyLink
 import br.com.gotuner.android.tuner.presentation.components.StringSelector
 import br.com.gotuner.android.tuner.presentation.components.TopBar
-import br.com.gotuner.android.tuner.presentation.components.TuningIndicator
 import br.com.gotuner.android.tuner.presentation.components.TuningInstruction
 import br.com.gotuner.android.tuner.presentation.preview.TunerPreviewStates
 import br.com.gotuner.android.tuner.presentation.preview.TunerUiStatePreviewProvider
@@ -90,14 +88,14 @@ fun TunerScreen(
     }
 }
 
-/** Live reading: frequency, deviation bar, cents and the verdict on what to do. */
+/** Live reading: the note strip showing the closest note, and the verdict on what to do. */
 @Composable
 private fun TuningReading(state: TunerUiState, tint: Color) {
-    FrequencyDisplay(frequency = state.detectedFrequency, tint = tint)
-
-    // TuningIndicator(cents = state.deviationCents, tint = tint)
-
-    CentsReadout(cents = state.deviationCents, tint = tint)
+    NoteStrip(
+        frequency = state.detectedFrequency,
+        targetFrequency = state.targetFrequency,
+        tint = tint
+    )
 
     TuningInstruction(
         status = state.tuningStatus,

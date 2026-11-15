@@ -3,8 +3,6 @@
     <string name="listening">Ouvindo</string>
     <string name="microphone_paused">Microfone pausado</string>
     <string name="frequency_unit">Hz</string>
-    <string name="cents_value">%1$s cents</string>
-    <string name="cents_empty">— cents</string>
     <string name="tighten_string">Aperte a corda</string>
     <string name="loosen_string">Afrouxe a corda</string>
     <string name="string_in_tune">Afinado ✓</string>
@@ -12,11 +10,7 @@
     <string name="enable_microphone">Ativar microfone</string>
     <string name="open_settings">Abrir Ajustes</string>
     <string name="retry">Tentar novamente</string>
-    <string name="flat">Grave</string>
     <string name="in_tune">Afinado</string>
-    <string name="sharp">Agudo</string>
-    <string name="tighten_direction">Apertar →</string>
-    <string name="loosen_direction">← Afrouxar</string>
     <string name="microphone_read_error">Microfone indisponível. Toque em Tentar novamente.</string>
     <string name="microphone_access_error">Não foi possível acessar o microfone. Verifique as permissões e tente novamente.</string>
     <string name="privacy_policy">Política de privacidade</string>
@@ -35,4 +29,6 @@
     <string name="pluck_any_string_detail">ou escolha uma abaixo</string>
     <string name="pluck_selected_string">Toque a %1$dª corda</string>
     <string name="pluck_selected_string_detail">Use “Ouvir %1$s” para escutar a nota</string>
+    <string name="closest_note">Nota mais próxima: %1$s, %2$s</string>
+    <string name="no_note_detected">Nenhuma nota detectada</string>
 </resources>
